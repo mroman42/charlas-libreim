@@ -1,0 +1,276 @@
+#+TITLE: Talks
+#+AUTHOR: Mario Román
+#+EMAIL: mromang08@gmail.com
+#+OPTIONS: num:nil reveal_mathjax:t toc:nil
+#+REVEAL_THEME: night
+#+REVEAL_TRANS: linear
+
+* Emacs
+** Introducción
+Esta charla va a constar de tres partes:
+
+ - 1. *Preparando Emacs*, en la que vamos a instalar y aprender a configurar Emacs.
+ - 2. *Usando Emacs*, en la que vamos a ver ejemplos de uso.
+ - 3. *Una configuración de Emacs*, donde pongo como ejemplo mi propia configuración.
+
+** Preparando Emacs
+*** Instalación de Emacs
+[[./images/emacspage.png]]
+
+#+begin_src bash
+ARCH:     sudo pacman -S emacs
+UBUNTU:   sudo apt install emacs25
+#+end_src 
+
+#+BEGIN_NOTES
+Vamos a empezar instalando Emacs. Podéis buscar la página oficial de GNU Emacs y buscar instrucciones
+de instalación desde allí. 
+
+ - En *ArchLinux*, podéis instalarlo desde los repositorios oficiales como =sudo pacman -S emacs=.
+   Y os vendrá en la versión 25 y no tendréis problema.
+ - En *Ubuntu*, si queréis la versión 25, salvo novedad de última hora, creo que tendréis que añadir
+   un repositorio que os dé la última versión. La versión 24 se debería poder instalar directamente
+   desde los repositorios de Ubuntu.
+
+La charla la voy a hacer desde la versión 25.1.50. No os puedo asegurar que vaya a funcionar todo
+en la vesión 24, pero todo lo básico seguramente sí y no deberíais tener problema.
+#+END_NOTES
+
+*** Pantalla de incio
+
+#+attr_html: :width 500px
+[[./images/1.startscreen.png]]
+
+#+BEGIN_NOTES
+Cuando iniciéis Emacs va a apareceros una pantalla de presentación.
+Va a depender de la versión que estéis usando, que podéis mirarla *aquí*
+y del sistema operativo.
+
+Vale, la idea cuando uno empieza en Emacs es seguir el Tutorial. Hay un tutorial de Emacs que os
+enseña los atajos de teclado básicos. Creo, y esto es opinión mía, que ese es el punto que asusta
+a mucha gente. *NO os tenéis que aprender los atajos de teclado ya*, no estáis obligados a usarlos.
+Y todo lo básico, como moverse con los cursores o saltar palabras con Control funciona igual que
+en la mayoría de editores. *Que exista un atajo no significa que tengas que usarlo si no te sientes
+cómodo*.
+
+Cuando os apetezca, podréis volver a probar algún día el tutorial de Emacs y aprender los atajos,
+que os harán trabajar mucho más rápido.
+#+END_NOTES
+
+*** Archivo de configuración
+#+REVEAL_HTML: <div class="column" style="float:left; width: 50%">
+#+attr_html: :width 450px
+[[./images/2.dotfile.png]]
+#+REVEAL_HTML: </div>
+
+#+REVEAL_HTML: <div class="column" style="float:right; width: 50%">
+Dos posibles nombres de los archivos de configuración en Emacs:
+
+#+BEGIN_SRC bash
+~/.emacs
+~/.emacs.d/init.el
+#+END_SRC
+
+Reiniciando la configuración de Emacs:
+
+#+BEGIN_SRC bash
+mv ~/.emacs ~/.emacs.old
+#+END_SRC 
+#+REVEAL_HTML: </div>
+
+#+BEGIN_NOTES
+¿Y si *no os aparece la pantalla de inicio*? Eso es porque ya tenéis
+escrita una configuración de Emacs.
+
+El archivo de configuración *es un archivo de texto plano*, donde vamos a escribir todo lo que 
+queramos configurar en Emacs. Emacs va a leerlo cuando arranque y va a cargar la configuración.
+*Si alguna vez queréis borrar todo*, sólo tenéis que cambiarle el nombre al archivo de configuración.
+En este taller vamos a estar trasteando la configuración; si luego llegáis a casa y queréis cambiar
+la configuración, la podéis borrar y volvéis a empezar.
+#+END_NOTES
+
+*** Abriendo un archivo, cambiando buffers
+#+REVEAL_HTML: <div class="column" style="float:left; width: 50%">
+# #+attr_html: :width 653px
+[[./images/3.testfile.gif]]
+#+REVEAL_HTML: </div>
+
+#+REVEAL_HTML: <div class="column" style="float:right; width: 50%">
+Abrir nuevo archivo con un comando:
+#+BEGIN_SRC bash
+Alt+x find-file  || M-x find-file
+#+END_SRC
+
+O con un atajo de teclado:
+#+BEGIN_SRC bash
+Ctrl+x Ctrl+f    || C-x C-f
+#+END_SRC
+
+Y podemos cambiar entre archivos abiertos con:
+#+BEGIN_SRC bash
+Ctrl+x <left>    || C-x left
+Ctrl+x <right>   || C-x right
+#+END_SRC
+#+REVEAL_HTML: </div>
+
+#+BEGIN_NOTES
+Vamos a probar a abrir un archivo mientras nos salimos a la vez del tutorial. 
+Podéis usar para eso dos formas, la primera, es la más general, es la forma de meter cualquier 
+comando en Emacs; pulsáis =Alt+x= y os aparecerá una línea de comandos pequeñita debajo de la ventana
+de Emacs. En esa ventana podéis ordenar cualquier comando a Emacs. ¡Pensad en Emacs como un intérprete
+que maneja texto a la vez!
+
+Como sería un poco pesao abrir la ventana cada vez que quisiéramos ordenar algo a Emacs, usamos
+atajos de teclado para mandar comandos a Emacs sin tener que escribirlos. En este caso, el atajo
+de teclado es =Control+x Control+f=. Que os abre la línea donde escribir el archivo que queréis 
+abrir; si no existe, lo crea nuevo.
+
+¿Y la notación =C-x=? Eso lo vemos en la siguiente diapositiva. Ahora os tenéis que quedar con una
+cosa; hay comandos, y atajos que nos ahorran escribir esos comandos.
+
+¿Cómo vuelvo a un archivo anterior que tengo abierto? Usando Control+x, y luego las flechas izquierda
+y derecha.
+#+END_NOTES
+
+*** Teclas básicas
+
+|---------+----------------+---------|
+| Atajo   | Comando        | Acción  |
+|---------+----------------+---------|
+| C-x C-s | save-buffer    | Guardar |
+| C-w     | kill-region    | Cortar  |
+| M-w     | kill-ring-save | Copiar  |
+| C-y     | yank-pop       | Pegar   |
+|---------+----------------+---------|
+
+=C-g= interrumpe cualquier comando.
+En =C-h= podéis buscar ayuda sobre comandos.
+
+#+BEGIN_NOTES
+En Emacs se usa una *notación específica* para escribir un atajos de teclado.
+La mayoría de documentación que consultes usará C-x en lugar de Control+x; 
+usará C-x C-s para indicar que debes dejar pulsado Control mientras pulsas 
+x y s; y por último, usará M-x, donde la M se referirá a la tecla Meta. La 
+tecla Meta en Emacs se refiere normalmente a dos opciones equivalentes, 
+o bien pulsar alt izq. mientras se pulsa x, o pulsar Esc y luego pulsar x.
+
+Copiar se hace con =M-w=, cortar con =C-w= y pegar con =C-y=. Yo sé que esto
+es un poco traumático para el que ha usado =C-c=, =C-v=; así que existen paquetes que 
+cambian estos atajos de teclado a los atajos normales. 
+
+*¿Por qué usarlo?* Puedes volver a usar C-c, C-v, C-z en Emacs, que es más cómodo.
+*¿Por qué no usarlo?* C-c es muy fácil de pulsar, eso quiere decir que es
+una forma muy rápida de prefijar comandos. Así puedes guardar como atajos
+de teclado C-c C-x.
+
+Después vamos a enseñar cómo instalar paquetes, y si queréis, instalamos
+CUA Mode.
+
+Por ahora intentad aprenderlos. Considerad usar una hoja para aprenderlos.
+#+END_NOTES
+
+*** Preferencias
+
+#+attr_html: :width 400px
+[[./images/4.config.gif]]
+
+#+BEGIN_NOTES
+Vamos a entrar a los menús de personalización de Emacs. Vamos a entrar
+a Environment para quitar la barra superior. No es útil, sólo os va a quitar
+espacio y os va a malacostumbrar a usarla.
+
+=customize-group RET emacs=
+
+Entramos en environment/frames. Las frames son las ventanas, tienen ese
+nombre porque se definieron antes que las GUIs. Tengo que ir a 
+Menu Bar Mode. TAB me coloca en el punto donde cambiar la customización.
+
+Salgo, con =q=; y consulto de nuevo .emacs. Y vemos que ha cambiado. Los
+menús son sólo una forma bonita de editar el archivo de configuración.
+#+END_NOTES
+
+*** Preferencias en el archivo de configuración
+#+attr_html: :width 500px
+[[./images/5.postconfig.png]]
+
+#+BEGIN_NOTES
+Cuando cambiamos una preferencia; si la *guardamos sólo para esta sesión*, lo que hacemos es ejecutar
+el comando que la activa. Pero cuando la *guardamos para todas las sesiones*; no sólo ejecutamos el 
+comando; sino que además lo escribimos en el archivo de configuración de Emacs; y por eso Emacs lo
+ejecutará al principio de cada sesión y tendremos ese comando en todas las sesiones.
+#+END_NOTES
+
+*** Extensiones: Preparando los repositorios
+#+REVEAL_HTML: <div class="column" style="float:left; width: 50%">
+[[./images/6.melpa.gif]]
+#+REVEAL_HTML: </div>
+
+#+REVEAL_HTML: <div class="column" style="float:right; width: 50%">
+Entramos en: 
+
+#+BEGIN_SRC bash
+M-x customize-group package 
+// package-archives
+#+END_SRC
+
+Y añadimos: 
+#+BEGIN_SRC bash
+melpa
+http://melpa.milkbox.net/packages
+#+END_SRC
+#+REVEAL_HTML: </div>
+
+#+BEGIN_NOTES
+Podríamos usar más repositorios de los que ofrece Emacs por defecto.
+Esto es algo que podemos cambiar en =customize=.
+
+El repositorio de MELPA es mucho más extenso que el repositorio original que trae consigo
+Emacs.
+#+END_NOTES
+
+*** Extensiones: Instalando
+
+#+BEGIN_SRC bash
+M-x package-list-packages
+#+END_SRC
+
+#+begin_notes
+En la lista de paquetes, podemos marcar para instalación con I o para
+actualizar con U. Para ejecutar lo que hemos marcado debemos pulsar x.
+#+end_notes
+** Mi configuración de Emacs
+*** Magit
+Podéis gestionar un repo de =Git= desde =magit=.
+
+*** Dict-replace
+*** Org-page
+*** Sobre matemáticas
+*** Yasnippets
+*** Esta presentación
+** TODO Usando Emacs
+*** C-Mode GDB
+*** Multiple cursors
+*** UMLs con org-draw
+*** Emacs server
+** Final
+*** Seguid aprendiendo
+**** Emacs StackExchange
+[[./images/emacsse.png]]
+
+#+begin_notes
+Podéis preguntar dudas sobre Emacs en el foro dedicado de StackExchange.
+#+end_notes
+
+**** Recursos
+Páginas de recursos sobre Emacs:
+
+ - [[http://sachachua.com/blog/category/geek/emacs/][Sacha Chua - Emacs News]]
+ - [[http://cestlaz.github.io/stories/emacs/][C'est la Z - Using Emacs]]
+ - [[https://emacsgifs.github.io/][Emacs gifs]]
+
+**** Mi artículo de Emacs
+*** TODO LibreIM
+Seguid a LibreIM
+
+ - Twitter: =@libreim_=
+ - 
