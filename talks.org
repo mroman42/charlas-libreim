@@ -1,17 +1,25 @@
-#+TITLE: Talks
-#+AUTHOR: Mario Román
-#+EMAIL: mromang08@gmail.com
+#+Title: Talks
+#+Author: Mario Román
+#+Email: mromang08@gmail.com
 #+OPTIONS: num:nil reveal_mathjax:t toc:nil
 #+REVEAL_THEME: night
 #+REVEAL_TRANS: linear
 
 * Emacs
 ** Introducción
-Esta charla va a constar de tres partes:
+*** ¿Por qué Emacs?
+
+ 1. Editor de texto plano
+ 2. Con intérprete de Lisp
+ 3. Software libre
+
+*** Partes
+Esta charla va a constar de cuatro partes:
 
  - 1. *Preparando Emacs*, en la que vamos a instalar y aprender a configurar Emacs.
  - 2. *Usando Emacs*, en la que vamos a ver ejemplos de uso.
- - 3. *Una configuración de Emacs*, donde pongo como ejemplo mi propia configuración.
+ - 3. *Extendiendo Emacs*, muestra del potencial de Emacs.
+ - 4. *Mi configuración*, paquetes que personalmente encuentro útiles.
 
 ** Preparando Emacs
 *** Instalación de Emacs
