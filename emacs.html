@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Emacs</title>
+<meta name="author" content="(Mario Román)"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="http://cdn.jsdelivr.net/reveal.js/3.0.0/css/reveal.css"/>
+
+<link rel="stylesheet" href="http://cdn.jsdelivr.net/reveal.js/3.0.0/css/theme/night.css" id="theme"/>
+
+
+<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+<script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'http://cdn.jsdelivr.net/reveal.js/3.0.0/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
+</script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide"><h1 class="title">Emacs</h1><h2 class="author">Mario Román</h2><p class="date">Created: 2016-11-20 Sun 12:09</p>
+</section>
+<section>
+<section id="slide-orgheadline3">
+<h2 id="orgheadline3">Introducción</h2>
+<div class="outline-text-2" id="text-orgheadline3">
+</div></section>
+<section id="slide-orgheadline1">
+<h3 id="orgheadline1">¿Por qué Emacs?</h3>
+<ol>
+<li>Editor de texto plano</li>
+<li>Con intérprete de Lisp</li>
+<li>Software libre</li>
+
+</ol>
+
+</section>
+<section id="slide-orgheadline2">
+<h3 id="orgheadline2">Partes</h3>
+<p>
+Esta charla va a constar de cuatro partes:
+</p>
+
+<ul>
+<li>1. <b>Preparando Emacs</b>, en la que vamos a instalar y aprender a configurar Emacs.</li>
+<li>2. <b>Usando Emacs</b>, en la que vamos a ver ejemplos de uso.</li>
+<li>3. <b>Extendiendo Emacs</b>, muestra del potencial de Emacs.</li>
+<li>4. <b>Mi configuración</b>, paquetes que personalmente encuentro útiles.</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-orgheadline13">
+<h2 id="orgheadline13">Preparando Emacs</h2>
+<div class="outline-text-2" id="text-orgheadline13">
+</div></section>
+<section id="slide-orgheadline4">
+<h3 id="orgheadline4">Instalación de Emacs</h3>
+
+<div class="figure">
+<p><img src="./images/emacspage.png" alt="emacspage.png" />
+</p>
+</div>
+
+<div class="org-src-container">
+
+<pre  class="src src-bash">ARCH:     sudo pacman -S emacs
+UBUNTU:   sudo apt install emacs25
+</pre>
+</div>
+
+</section>
+<section id="slide-orgheadline5">
+<h3 id="orgheadline5">Pantalla de incio</h3>
+
+<div class="figure">
+<p><img src="./images/1.startscreen.png" alt="1.startscreen.png" width="500px" />
+</p>
+</div>
+
+</section>
+<section id="slide-orgheadline6">
+<h3 id="orgheadline6">Abriendo un archivo, cambiando buffers</h3>
+<div class="column" style="float:left; width: 50%">
+
+
+<div class="figure">
+<p><img src="./images/3.testfile.gif" alt="3.testfile.gif" />
+</p>
+</div>
+</div>
+
+<div class="column" style="float:right; width: 50%">
+<p>
+Abrir nuevo archivo con un comando:
+</p>
+<div class="org-src-container">
+
+<pre  class="src src-bash">Alt+x find-file  || M-x find-file
+</pre>
+</div>
+
+<p>
+O con un atajo de teclado:
+</p>
+<div class="org-src-container">
+
+<pre  class="src src-bash">Ctrl+x Ctrl+f    || C-x C-f
+</pre>
+</div>
+
+<p>
+Y podemos cambiar entre archivos abiertos con:
+</p>
+<div class="org-src-container">
+
+<pre  class="src src-bash">Ctrl+x &lt;left&gt;    || C-x left
+Ctrl+x &lt;right&gt;   || C-x right
+</pre>
+</div>
+</div>
+
+</section>
+<section id="slide-orgheadline7">
+<h3 id="orgheadline7">Teclas básicas</h3>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Atajo</th>
+<th scope="col" class="org-left">Comando</th>
+<th scope="col" class="org-left">Acción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">C-x C-s</td>
+<td class="org-left">save-buffer</td>
+<td class="org-left">Guardar</td>
+</tr>
+
+<tr>
+<td class="org-left">C-x C-f</td>
+<td class="org-left">find-file</td>
+<td class="org-left">Abrir</td>
+</tr>
+
+<tr>
+<td class="org-left">C-g</td>
+<td class="org-left">keyboard-quit</td>
+<td class="org-left">Aborta comando</td>
+</tr>
+
+<tr>
+<td class="org-left">C-s</td>
+<td class="org-left">isearch-forward</td>
+<td class="org-left">Buscar</td>
+</tr>
+
+<tr>
+<td class="org-left">C-w</td>
+<td class="org-left">kill-region</td>
+<td class="org-left">Cortar</td>
+</tr>
+
+<tr>
+<td class="org-left">M-w</td>
+<td class="org-left">kill-ring-save</td>
+<td class="org-left">Copiar</td>
+</tr>
+
+<tr>
+<td class="org-left">C-y</td>
+<td class="org-left">yank-pop</td>
+<td class="org-left">Pegar</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+<code>C-g</code> interrumpe cualquier comando.
+En <code>C-h</code> podéis buscar ayuda sobre comandos. <b>CUA-mode</b> es una opción.
+Intentad aprender los atajos teniéndolos en un folio.
+</p>
+
+</section>
+<section id="slide-orgheadline8">
+<h3 id="orgheadline8">Archivo de configuración</h3>
+<div class="column" style="float:left; width: 50%">
+
+<div class="figure">
+<p><img src="./images/2.dotfile.png" alt="2.dotfile.png" width="450px" />
+</p>
+</div>
+</div>
+
+<div class="column" style="float:right; width: 50%">
+<p>
+Dos posibles nombres de los archivos de configuración en Emacs:
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-bash">~/.emacs
+~/.emacs.d/init.el
+</pre>
+</div>
+
+<p>
+Reiniciando la configuración de Emacs:
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-bash">mv ~/.emacs ~/.emacs.old
+</pre>
+</div>
+</div>
+
+</section>
+<section id="slide-orgheadline9">
+<h3 id="orgheadline9">Preferencias</h3>
+
+<div class="figure">
+<p><img src="./images/4.config.gif" alt="4.config.gif" width="600px" />
+</p>
+</div>
+
+</section>
+<section id="slide-orgheadline10">
+<h3 id="orgheadline10">Preferencias en el archivo de configuración</h3>
+
+<div class="figure">
+<p><img src="./images/5.postconfig.png" alt="5.postconfig.png" width="500px" />
+</p>
+</div>
+
+</section>
+<section id="slide-orgheadline11">
+<h3 id="orgheadline11">Extensiones: Preparando los repositorios</h3>
+<div class="column" style="float:left; width: 50%">
+
+<div class="figure">
+<p><img src="./images/6.melpa.gif" alt="6.melpa.gif" />
+</p>
+</div>
+</div>
+
+<div class="column" style="float:right; width: 50%">
+<p>
+Entramos en: 
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-bash">M-x customize-group package 
+// package-archives
+</pre>
+</div>
+
+<p>
+Y añadimos: 
+</p>
+<div class="org-src-container">
+
+<pre  class="src src-bash">melpa
+http://melpa.milkbox.net/packages
+</pre>
+</div>
+
+<p>
+Y podemos instalar con:
+</p>
+<div class="org-src-container">
+
+<pre  class="src src-bash">M-x package-list-packages
+</pre>
+</div>
+
+</div>
+
+</section>
+<section id="slide-orgheadline12">
+<h3 id="orgheadline12">MELPA</h3>
+
+<div class="figure">
+<p><img src="./images/melpa.png" alt="melpa.png" />
+</p>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-orgheadline18">
+<h2 id="orgheadline18">Usos de Emacs</h2>
+<div class="outline-text-2" id="text-orgheadline18">
+</div></section>
+<section id="slide-orgheadline14">
+<h3 id="orgheadline14">Programación</h3>
+
+<div class="figure">
+<p><img src="./images/cprogramming.png" alt="cprogramming.png" width="800px" />
+</p>
+</div>
+
+<p>
+<a href="http://cachestocaches.com/2015/8/c-completion-emacs/">C completion in Emacs</a> - Gregory Stein
+</p>
+
+</section>
+<section id="slide-orgheadline15">
+<h3 id="orgheadline15">Programación</h3>
+
+<div class="figure">
+<p><img src="./images/jsprogramming.gif" alt="jsprogramming.gif" width="800px" />
+</p>
+</div>
+
+<p>
+<a href="http://vinitkumar.me/articles/2014/05/04/Setting-Up-Emacs-For-Development/">Setting up Emacs for development</a> - Vinit Kumar
+</p>
+
+</section>
+<section id="slide-orgheadline16">
+<h3 id="orgheadline16">Org-mode</h3>
+
+<div class="figure">
+<p><img src="./images/orgview.png" alt="orgview.png" />
+</p>
+</div>
+
+<p>
+<a href="http://correl.phoenixinquis.net/2014/11/25/getting-organized-with-org-mode.html">Getting organized with org-mode</a> - Correl Roush
+</p>
+
+</section>
+<section id="slide-orgheadline17">
+<h3 id="orgheadline17">Apuntes en Latex</h3>
+
+<div class="figure">
+<p><img src="./images/latexemacs.png" alt="latexemacs.png" width="550px" />
+</p>
+</div>
+
+<p>
+<i>Imagen de una <a href="http://stackoverflow.com/questions/19274832/how-to-configure-emacs-to-use-variable-fonts-to-display-the-previsualisation-of">pregunta</a> en StackOverflow</i>.
+</p>
+
+</section>
+</section>
+<section>
+<section id="slide-orgheadline26">
+<h2 id="orgheadline26">Paquetes y configuraciones</h2>
+<div class="outline-text-2" id="text-orgheadline26">
+</div></section>
+<section id="slide-orgheadline19">
+<h3 id="orgheadline19">Múltiples cursores</h3>
+
+<div class="figure">
+<p><img src="./images/delete-example.gif" alt="delete-example.gif" />
+</p>
+</div>
+
+<p>
+<a href="https://mollermara.com/blog/ace-mc/">ace-mc</a>, Josh Moller-Mara
+</p>
+
+</section>
+<section id="slide-orgheadline20">
+<h3 id="orgheadline20">eww</h3>
+
+<div class="figure">
+<p><img src="./images/eww.png" alt="eww.png" width="600px" />
+</p>
+</div>
+
+</section>
+<section id="slide-orgheadline21">
+<h3 id="orgheadline21">Macros</h3>
+<p>
+Registran una serie de acciones y las repiten:
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">f3</td>
+<td class="org-left">Empieza a grabar</td>
+</tr>
+
+<tr>
+<td class="org-left">f4</td>
+<td class="org-left">Termina de grabar</td>
+</tr>
+
+<tr>
+<td class="org-left">f4</td>
+<td class="org-left">Repite la macro</td>
+</tr>
+</tbody>
+</table>
+
+</section>
+<section id="slide-orgheadline22">
+<h3 id="orgheadline22">Emacs server</h3>
+<div class="org-src-container">
+
+<pre  class="src src-bash">emacs --daemon <span style="color: #99968b;"># </span><span style="color: #99968b;">runs at startup</span>
+emacsclient    <span style="color: #99968b;"># </span><span style="color: #99968b;">opens a new client</span>
+</pre>
+</div>
+
+<p>
+<a href="https://www.youtube.com/watch?v=KG7ze_WN0As">Emacs normal vs. Emacs daemon</a> - Jae-oh Kim
+</p>
+
+<aside class="notes">
+<p>
+Usar Emacs como demonio del sistema que arranca al inicio
+hace que cuando queramos usarlo esté ya arrancado y no gaste
+tiempo en arrancar. En el vídeo se muestra una comparación.
+</p>
+
+<p>
+Es ligeramente más complicado conseguir que empiece a funcionar
+y por eso no lo tratamos hoy.
+</p>
+
+</aside>
+</section>
+<section id="slide-orgheadline23">
+<h3 id="orgheadline23">Esta presentación</h3>
+<p>
+¡Esta presentación está escrita en Emacs con <code>org-mode</code>!
+</p>
+</section>
+<section id="slide-orgheadline24">
+<h3 id="orgheadline24">Código con org-babel</h3>
+<div class="org-src-container">
+
+<pre  class="src src-ruby"><span style="color: #8ac6f2; font-weight: bold;">def</span> <span style="color: #cae682;">prime</span>(p)
+  <span style="color: #8ac6f2; font-weight: bold;">return</span> (2..<span style="color: #92a65e; font-weight: bold;">Math</span>.sqrt(p)).none? { |d| <span style="color: #e5786d;">p</span> % d == 0 }
+<span style="color: #8ac6f2; font-weight: bold;">end</span>
+
+[prime(42),prime(97),prime(5),prime(7),prime(9)]
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">false</td>
+<td class="org-left">true</td>
+<td class="org-left">true</td>
+</tr>
+</tbody>
+</table>
+
+</section>
+<section id="slide-orgheadline25">
+<h3 id="orgheadline25">UMLs con artist-mode</h3>
+
+<div class="figure">
+<p><img src="./images/uml.png" alt="uml.png" />
+</p>
+</div>
+
+<p>
+<a href="https://www.youtube.com/watch?v=cIuX87Xo8Fc">Poor's Man UML</a> - Emacs Artist Mode
+</p>
+</section>
+</section>
+<section>
+<section id="slide-orgheadline35">
+<h2 id="orgheadline35">Mi configuración</h2>
+<div class="outline-text-2" id="text-orgheadline35">
+</div></section>
+<section id="slide-orgheadline27">
+<h3 id="orgheadline27">Magit para repositorios</h3>
+
+<div class="figure">
+<p><img src="./images/magit.png" alt="magit.png" />
+</p>
+</div>
+
+</section>
+<section id="slide-orgheadline28">
+<h3 id="orgheadline28">Ayuda a la traducción</h3>
+
+<div class="figure">
+<p><img src="./images/dictreplace.gif" alt="dictreplace.gif" />
+</p>
+</div>
+
+</section>
+<section id="slide-orgheadline29">
+<h3 id="orgheadline29">Blog usando org-page</h3>
+
+<div class="figure">
+<p><img src="./images/orgpage.png" alt="orgpage.png" />
+</p>
+</div>
+
+</section>
+<section id="slide-orgheadline30">
+<h3 id="orgheadline30">Matemáticas en org-mode</h3>
+
+<div class="figure">
+<p><img src="./images/orgmath.png" alt="orgmath.png" width="700px" />
+</p>
+</div>
+
+</section>
+<section id="slide-orgheadline31">
+<h3 id="orgheadline31">Imágenes en org-mode</h3>
+
+<div class="figure">
+<p><img src="./images/orgpinta.jpg" alt="orgpinta.jpg" />
+</p>
+</div>
+
+</section>
+<section id="slide-orgheadline32">
+<h3 id="orgheadline32">Código en org-mode</h3>
+
+<div class="figure">
+<p><img src="./images/orgbabel.png" alt="orgbabel.png" />
+</p>
+</div>
+
+</section>
+<section id="slide-orgheadline33">
+<h3 id="orgheadline33">Integración con sage</h3>
+
+<div class="figure">
+<p><img src="./images/orgsage.jpg" alt="orgsage.jpg" />
+</p>
+</div>
+
+</section>
+<section id="slide-orgheadline34">
+<h3 id="orgheadline34">Sage dibujando gráficas</h3>
+<div class="org-src-container">
+
+<pre  class="src src-sage">x = var('x')
+p1 = parametric_plot((cos(x),sin(x)),(x,0,2*pi),rgbcolor=hue(0.2))
+p2 = parametric_plot((cos(x),sin(x)^2),(x,0,2*pi),rgbcolor=hue(0.4))
+p3 = parametric_plot((cos(x),sin(x)^3),(x,0,2*pi),rgbcolor=hue(0.6))
+show(p1+p2+p3)
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="./images/sageplot.png" alt="sageplot.png" width="400px" />
+</p>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-orgheadline41">
+<h2 id="orgheadline41">Referencias</h2>
+<div class="outline-text-2" id="text-orgheadline41">
+</div></section>
+<section id="slide-orgheadline36">
+<h3 id="orgheadline36">Artículo del blog</h3>
+<p>
+Todo lo que explico en esta presentación está en:
+</p>
+
+<ul>
+<li><a href="http://tux.ugr.es/dgiim/blog/2016/09/19/aprendiendo-emacs/">El artículo del blog de LibreIM</a></li>
+<li><a href="https://www.emacswiki.org">Emacs wiki</a></li>
+
+</ul>
+
+<aside class="notes">
+<p>
+Un último consejo: aprended Emacs poco a poco, pasito a pasito,
+id probando cada configuración y cada detalle y acostumbraros a él.
+A la larga podréis ir avanzando cada vez más rápido.
+</p>
+
+</aside>
+
+</section>
+<section id="slide-orgheadline37">
+<h3 id="orgheadline37">Recursos</h3>
+<p>
+Páginas de recursos sobre Emacs:
+</p>
+
+<ul>
+<li><a href="http://sachachua.com/blog/category/geek/emacs/">Sacha Chua - Emacs News</a></li>
+<li><a href="http://cestlaz.github.io/stories/emacs/">C'est la Z - Using Emacs</a></li>
+<li><a href="https://emacsgifs.github.io/">Emacs gifs</a></li>
+
+</ul>
+
+<p>
+En estos blogs se listan noticias, tutoriales e ideas para la
+configuración de Emacs.
+</p>
+
+</section>
+<section id="slide-orgheadline38">
+<h3 id="orgheadline38">Emacs StackExchange</h3>
+
+<div class="figure">
+<p><img src="./images/emacsse.png" alt="emacsse.png" />
+</p>
+</div>
+
+<aside class="notes">
+<p>
+Podéis preguntar dudas sobre Emacs en el foro dedicado de StackExchange.
+</p>
+
+</aside>
+
+</section>
+<section id="slide-orgheadline39">
+<h3 id="orgheadline39">How Emacs changed my life</h3>
+<p>
+Es el título de una charla de <b>Yukiro Matsumoto</b>:
+</p>
+
+<ol>
+<li>Emacs taught me freedom for software.</li>
+<li>Emacs taught me how to code.</li>
+<li>Emacs taught me the power of Lisp.</li>
+<li>Emacs taught me how to implement a core language.</li>
+<li>Emacs taught me how to implement a garbage collector.</li>
+<li>Emacs helped me to code and debug.</li>
+<li>Emacs helped me to write and edit text/mails/documents.</li>
+<li>Emacs helped me to be an effective programmer.</li>
+<li>Emacs made me a hacker.</li>
+<li>Emacs has changed my life.</li>
+
+</ol>
+
+</section>
+<section id="slide-orgheadline40">
+<h3 id="orgheadline40">LibreIM</h3>
+
+<div class="figure">
+<p><img src="./images/libreim.png" alt="libreim.png" width="150px" />
+</p>
+</div>
+
+<p>
+Seguid a LibreIM para más seminarios. ¡Podéis colaborar con el blog o
+preparando seminarios!
+</p>
+
+<ul>
+<li>Twitter:  <code>@libreim_</code></li>
+<li>Blog:     <code>tux.ugr.es/dgiim</code></li>
+<li>Telegram: <code>https://telegram.me/libreimseminarios</code></li>
+
+</ul>
+</section>
+</section>
+</div>
+</div>
+<script src="http://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/head.min.js"></script>
+<script src="http://cdn.jsdelivr.net/reveal.js/3.0.0/js/reveal.js"></script>
+
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: false,
+center: true,
+slideNumber: 'c',
+rollingLinks: false,
+keyboard: true,
+overview: true,
+
+theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+transition: Reveal.getQueryHash().transition || 'linear', // default/cube/page/concave/zoom/linear/fade/none
+transitionSpeed: 'default',
+multiplex: {
+    secret: '', // null if client
+    id: '', // id, obtained from socket.io server
+    url: '' // Location of socket.io server
+},
+
+// Optional libraries used to extend on reveal.js
+dependencies: [
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+ { src: 'http://cdn.jsdelivr.net/reveal.js/3.0.0/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }]
+});
+</script>
+</body>
+</html>
