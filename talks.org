@@ -211,7 +211,7 @@ y por eso no lo tratamos hoy.
 | false | true | true | 
   
 *** UMLs con artist-mode
-#+BEGIN_SRC ditaa :file uml.png :export both
+#+BEGIN_SRC ditaa :file ./images/uml.png :export both
   +------------------+
   |  UML             |                                  +---------------------------+
   +------------------+          +--------------+        |                           |
@@ -221,17 +221,10 @@ y por eso no lo tratamos hoy.
   |                  |          |              |        |                           |
   |                  |          +--------------+        +---------------------------+
   +------------------+
-
-
-
-
-
-
-
 #+END_SRC
 
 #+RESULTS:
-[[file:uml.png]]
+[[file:./images/uml.png]]
 
 [[https://www.youtube.com/watch?v=cIuX87Xo8Fc][Poor's Man UML]] - Emacs Artist Mode
 ** Mi configuración
