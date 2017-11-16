@@ -1,0 +1,463 @@
+#+Title: Categorías y funtores
+#+Author: Mario Román
+#+Email: mromang08@gmail.com
+#+language: es
+#+options: H:2
+#+beamer_theme: metropolis
+
+#+latex_header: \usepackage{tikz-cd}
+#+latex_header: \newcommand\midgreen{\color{green!70!black}}
+#+latex_header: \newcommand\heavygreen{\color{green!20!black}}
+#+latex_header: \newcommand\carg{\color{green!50!black}}
+#+latex_header: \newcommand\cfun{\color{blue!50!black}}
+#+latex_header: \newcommand\cneu{\color{defaultcolor}}
+#+latex_header: \usepackage{multicol}
+
+
+* Categorías
+** Definición (I)
+Una *categoría* ${\cal C}$ está formada por
+
+ * *objetos* o /puntos/, que llamaremos $a,b,c,\dots$,
+ * y *morfismos* o /flechas/ de un objeto a otro, que llamaremos $f,g,h,\dots$.
+
+Que un morfismo $f$ sea de $a$ hacia $b$ se escribe como
+$f \colon a \to b$
+o, en ocasiones, $f \in \mathrm{hom}(a,b)$.
+
+\pause
+/Los objetos y las flechas son nociones fundamentales sin definición./
+
+** Definición (I)
+Hasta aquí, parece un grafo con múltiples aristas.
+\[\begin{tikzcd}[ampersand replacement=\&]
+\& a \drar[bend left]{f}\drar[bend right]{g} \& \\
+b \ar{rr}{k}\urar{h} \&\& c
+\end{tikzcd}\]
+
+Hay objetos $a,b,c$ y flechas
+
+ * $f \colon  a \to c$,
+ * $g \colon a \to c$,
+ * $h \colon b \to a$,
+ * $k \colon b \to c$. 
+
+** Definición (II)
+Lo que distingue a las categorías es que las flechas se componen
+para crear otras flechas. Hay una *operación composición*.
+
+\pause
+
+ * La operación *composición*; dadas dos flechas $f \colon a \to b$ y $g \colon b \to c$,
+   da una flecha $g \circ f \colon a \to c$.
+   \[\begin{tikzcd}[ampersand replacement=\&]
+   a\rar{f}\ar[bend right,swap]{rr}{g \circ f} \& b\rar{g} \& c \\
+   \end{tikzcd}\]
+
+   \pause
+   /¡Nótese que no cualesquiera dos flechas pueden componerse!/ \\
+   /Una tiene que tener como "dominio" el "codominio" de la otra para poder ser "componibles"./
+
+** Propiedades de la composición
+ * Es *asociativa*, si tenemos
+   \[\begin{tikzcd}[ampersand replacement=\&]
+   a \rar{f} \ar[bend right,swap]{rr}{g \circ f} 
+   \ar[bend left=30]{rrr}{h \circ g \circ f} \&
+   b \rar{g} \ar[bend right,swap]{rr}{h \circ g} \&
+   c \rar{h} \&
+   d
+   \end{tikzcd}\]
+   entonces $h \circ (g \circ f) = (h \circ g) \circ f$ y escribimos simplemente $h \circ g \circ f$.
+
+\pause
+
+ * Cada objeto tiene una flecha *identidad*, neutra respecto a la composición
+   \[\begin{tikzcd}[ampersand replacement=\&]
+   a \arrow[loop above]{l}{\mathrm{id}_a} \rar{f} \&
+   b \arrow[loop above]{l}{\mathrm{id}_b}
+   \end{tikzcd}\]
+   de forma que $f \circ \mathrm{id}_a = f$ y $\mathrm{id}_b \circ f = f$.
+
+** Definición formal
+En resumen, una *categoría* es
+
+ 1. una colección de *objetos*,
+ 2. con /morfismos/ o *flechas* entre ellos,
+ 3. con una *composición* de flechas "componibles",
+ 4. que es *asociativa*,
+ 5. y que tiene una flecha *identidad* en cada objeto.
+
+* Algunas categorías
+** Una categoría cualquiera
+Tres *objetos* $a,b,c$ y siete *morfismos*.
+\[\begin{tikzcd}[ampersand replacement=\&]
+\& a \arrow[loop above]{l}{\mathrm{id}_a} \drar[bend left]{f}\drar[bend right]{g} \& \\
+b \ar{rr}{k}\urar{h} \arrow[loop left]{l}{\mathrm{id}_b} \&\& c\arrow[loop right]{l}{\mathrm{id}_c}
+\end{tikzcd}\]
+
+Con la *composición* definida como
+
+ * $f \circ h = k$,
+ * $g \circ h = k$,
+ * $\mathrm{id}_a \circ h = h$
+ * $f \circ \mathrm{id}_a = f$
+ * ...
+
+que se comprueba *asociativa* y con *identidades*.
+
+** Una categoría discreta
+Una categoría es *discreta* si sólo tiene morfismos identidad.
+Por ejemplo, la categoría de tres *objetos* con *morfismos*,
+\[\begin{tikzcd}[ampersand replacement=\&]
+a \arrow[loop above]{l}{\mathrm{id}_a} \&
+b \arrow[loop above]{l}{\mathrm{id}_b} \&
+c \arrow[loop above]{l}{\mathrm{id}_c}
+\end{tikzcd}\]
+
+donde la *composición* se define de la única forma posible para
+que sea *asociativa* y con *identidad*: $\mathrm{id}_{a} \circ \mathrm{id}_{a} = \mathrm{id}_{a}$;
+$\mathrm{id}_{b} \circ \mathrm{id}_{b} = \mathrm{id}_{b}$;
+$\mathrm{id}_{c} \circ \mathrm{id}_{c} = \mathrm{id}_{c}$.
+
+\pause
+/¡Los conjuntos son lo mismo que las categorías discretas!/
+
+** Una categoría vacía
+La categoría vacía tiene 0 *objetos*, con 0 *morfismos*. La *composición*
+entre dos morfismos no hay que definirla porque no hay dos morfismos
+componibles; y como no existe, es claramente *asociativa* y existe una
+*identidad* para cada uno de los 0 objetos.
+
+** Una categoría con un sólo objeto
+Una categoría con un sólo *objeto* $a$ e /infinitos/ (numerables) *morfismos*
+$f^0,f^1,f^2,\dots \colon a \to a$, todos de $a$ hacia $a$.
+\[\begin{tikzcd}[ampersand replacement=\&]
+a 
+\arrow[loop above]{l}{f^0}
+\arrow[out=80,in=50,loop,"f^1"]
+\arrow[out=50,in=20,loop,"f^2"]
+\arrow[out=20,in=-10,loop,"f^3"]
+\arrow[out=-10,in=-40,loop,"\dots"]
+\end{tikzcd}\]
+
+Que se *componen* como $f^n \circ f^m = f^{n+m}$. La composición es *asociativa*
+y hay una identidad llamada $f^0$.
+
+\pause
+/Esta categoría es el monoide de los naturales con la suma./\\
+/¡Todos monoides son categorías de un objeto!/
+
+** Una categoría infinita
+Una categoría que tiene /infinitos/ (numerables) *objetos* $a_0,a_1,a_2,\dots$
+y *morfismos* de la forma $p_{xy} \colon a_x \to a_{y}$ para cualesquiera $x \leq y$.\\
+/¡No dibujamos todas las flechas!/
+
+\pause
+\[\begin{tikzcd}[ampersand replacement=\&]
+a_{0} \arrow[loop above]{l}{p_{00}} \rar{p_{01}} \ar[bend right,swap]{rr}{p_{02}} \ar[bend left]{rrr}{p_{03}}\&
+a_{1} \rar{p_{12}} \ar[bend right,swap]{rr}{p_{13}} \ar[bend left]{rrr}{p_{14}}\&
+a_{2} \rar{p_{23}} \ar[bend right,swap]{rr}{p_{24}} \ar[bend left]{rrr}{p_{25}}\&
+a_{3} \rar{p_{34}} \ar[bend right,swap]{rr}{p_{35}} \&
+\dots \&
+\phantom{.}
+\end{tikzcd}\]
+
+La *composición* se define $p_{y,z} \circ p_{x,y} = p_{x,z}$. Se puede ver que es
+*asociativa* y que tiene una identidad en cada objeto, $p_{x,x}$.
+
+** La (enorme) categoría de conjuntos
+Una categoría que tiene un *objeto* por cada conjunto que existe; y
+un morfismo por cada *función* entre conjuntos que existe.
+
+\pause
+/Un dibujo infinito y extraordinariamente complejo iría aquí, pintando
+todos los conjuntos posibles y todas las funciones posibles./
+\pause
+
+La *composición* es la composición usual de funciones, donde $g \circ f$ es
+la función tal que $(g \circ f)(x) = g(f(x))$. Esta composición es *asociativa*
+y cada conjunto tiene una función identidad definida $\mathrm{id}(x) = x$.
+
+** Grupos
+Parecida a la categoría de conjuntos, pero sólo consideramos los
+conjuntos que son grupos como *objetos* y sólo consideramos las funciones que
+son homomorfismos de grupos como *morfismos*.
+
+\pause
+
+¡Tenemos que comprobar que la composición de dos homomorfismos de
+grupos es un homomorfismo de grupos y que la identidad es un homomorfismo
+de grupos!
+
+** Espacios topológicos
+Parecida a la categoría de conjuntos, pero sólo consideramos los
+conjuntos que son espacios topológicos como *objetos* y sólo consideramos las funciones que
+son continuas como *morfismos*.
+
+\pause
+
+¡Tenemos que comprobar que la composición de dos funciones continuas
+es una función continua y que la identidad es una función continua!
+
+** La "categoría" de los tipos en un lenguaje de programación
+Los *objetos* son los tipos del lenguaje, como =Int=, =String=, =Bool=, =[Bool]=, =(String,Bool)=, 
+y los *morfismos* son las funciones de un tipo a otro, como
+
+=isprime :: Int -> Bool= \\
+=swap :: (String, Bool) -> (Bool, String)=
+
+La *composición* está dada como
+
+ * =compose g f x = g (f x)=
+
+y es *asociativa* y tiene una *identidad* para cada tipo dada por \\
+=id x = x=.
+* Funtores
+** Definición de funtor
+Un *funtor* $F$ de una categoría ${\cal C}$ a una categoría ${\cal D}$ sería algo así
+como un homomorfismo de categorías.
+
+\pause
+ * A cada objeto $a$ de ${\cal C}$, se le asigna un objeto $F(a)$ en ${\cal D}$.
+\pause
+ * A cada morfismo $f \colon a \to b$ de ${\cal C}$, se le asigna un morfismo
+   $F(f) \colon F(a) \to F(b)$ de ${\cal D}$.
+\pause
+
+/¡Nótese que la $F$ tiene dos significados!/
+
+** Definición de funtor II
+Además los funtores deben cumplir dos propiedades.
+
+ * Respetar composiciones, es decir,
+
+   \[
+   F(g \circ f) = F(g) \circ F(f).
+   \]
+
+ * Y respetar identidades, es decir,
+
+   \[
+   F(\mathrm{id}_a) = \mathrm{id}_{F(a)}.
+   \]
+
+** Dibujando un funtor: flechas
+Sean dos categorías, de las que no dibujamos la identidad. A la
+izquierda ${\cal C}$ y a la derecha ${\cal D}$,
+
+#+Beamer: \only<1,6>{
+\[\begin{tikzcd}[ampersand replacement=\&]
+x\dar{u}\& \& 
+a 
+\drar[bend left]{f}
+\drar[bend right]{g} \& \\
+y\&
+b 
+\ar{rr}{k}\urar{h} \&\& c
+\end{tikzcd}\]
+#+Beamer: }\only<2>{
+\[\begin{tikzcd}[ampersand replacement=\&]
+x\dar{u}\& \& 
+\color{red}{a}
+\drar[bend left,color=red]{f}
+\drar[bend right]{g} \& \\
+y\&
+b 
+\ar{rr}{k}\urar{h} \&\& 
+\color{red}{c}
+\end{tikzcd}\]
+#+Beamer: }\only<3>{
+\[\begin{tikzcd}[ampersand replacement=\&]
+x\dar{u}\& \& 
+\color{red}{a}
+\drar[bend left]{f}
+\drar[bend right,color=red]{g} \& \\
+y\&
+b 
+\ar{rr}{k}\urar{h} \&\& 
+\color{red}{c}
+\end{tikzcd}\]
+#+Beamer: }\only<4>{
+\[\begin{tikzcd}[ampersand replacement=\&]
+x\dar{u}\& \& 
+a
+\drar[bend left]{f}
+\drar[bend right]{g} \& \\
+y\&
+\color{red}{b} 
+\ar[color=red]{rr}{k}\urar{h} \&\& 
+\color{red}{c}
+\end{tikzcd}\]
+#+Beamer: }\only<5>{
+\[\begin{tikzcd}[ampersand replacement=\&]
+x\dar{u}\& \& 
+a
+\drar[bend left]{f}
+\drar[bend right]{g} \& \\
+y\&
+b
+\ar{rr}{k}\urar{h} \&\& 
+\color{red}{c}
+\arrow[loop right,color=red]{l}{\mathrm{id}_c}
+\end{tikzcd}\]
+#+Beamer: }
+
+\pause
+Un *funtor* $F$ estaría definido eligiendo un $F(x)$, un $F(y)$ y
+un $F(u) \colon F(x) \to F(y)$. Por ejemplo:
+
+#+Beamer: \only<2>{
+ * $F(x) = a$
+ * $F(y) = c$
+ * $F(u) = f$
+#+Beamer: }\only<3>{
+ * $F(x) = a$
+ * $F(y) = c$
+ * $F(u) = g$
+#+Beamer: }\only<4>{
+ * $F(x) = b$
+ * $F(y) = c$
+ * $F(u) = k$
+#+Beamer: }\only<5>{
+ * $F(x) = c$
+ * $F(y) = c$
+ * $F(u) = \mathrm{id}_{c}$
+#+Beamer: }\only<6>{
+/Definir un funtor desde la categoría de una flecha es *elegir una flecha*./
+#+Beamer: }
+
+** Dibujando un funtor: triángulos
+Sean dos categorías, de las que no dibujamos la identidad. A la
+izquierda ${\cal C}$ y a la derecha ${\cal D}$,
+
+#+Beamer: \only<1,5>{
+\[\begin{tikzcd}[ampersand replacement=\&]
+x\dar[swap]{u} \drar{w}\&\&\& 
+a 
+\drar[bend left]{f}
+\drar[bend right]{g} \& \\
+y\rar[swap]{v}\&
+z\&
+b 
+\ar{rr}{k}\urar{h} \&\& c
+\end{tikzcd}\]
+#+Beamer: }\only<2>{
+\[\begin{tikzcd}[ampersand replacement=\&]
+x\dar[swap]{u} \drar{w}\&\&\& 
+\color{red}{a}
+\drar[bend left,color=red]{f}
+\drar[bend right]{g} \& \\
+y\rar[swap]{v}\&
+z\&
+\color{red}{b}
+\ar[color=red]{rr}{k}\urar[color=red]{h} \&\&
+\color{red}{c}
+\end{tikzcd}\]
+#+Beamer: }\only<3>{
+\[\begin{tikzcd}[ampersand replacement=\&]
+x\dar[swap]{u} \drar{w}\&\&\& 
+\color{red}{a}
+\drar[bend left]{f}
+\drar[bend right,color=red]{g} \& \\
+y\rar[swap]{v}\&
+z\&
+\color{red}{b}
+\ar[color=red]{rr}{k}\urar[color=red]{h} \&\&
+\color{red}{c}
+\end{tikzcd}\]
+#+Beamer: }\only<4>{
+\[\begin{tikzcd}[ampersand replacement=\&]
+x\dar[swap]{u} \drar{w}\&\&\& 
+\color{red}{a} 
+\drar[bend left,color=red]{f}
+\drar[bend right]{g} \& \\
+y\rar[swap]{v}\&
+z\&
+b 
+\ar{rr}{k}\urar{h} \&\& 
+\color{red}{c}
+\arrow[loop right,color=red]{l}{\mathrm{id}_c}
+\end{tikzcd}\]
+#+Beamer: }
+
+donde $v \circ u = w$. \pause Un *funtor* $F$ estará definido eligiendo $F(x),F(y),F(z)$
+y luego $F(u)$ y $F(v)$ de forma que al componerse den
+$F(w) = F(v \circ u) = F(v) \circ F(u)$. Por ejemplo:
+
+#+Beamer: \only<2>{
+ * $F(u) = h$
+ * $F(v) = f$
+ * $F(w) = F(v \circ u) = F(v) \circ F(u) = h \circ f = k$
+#+Beamer: }\only<3>{
+ * $F(u) = h$
+ * $F(v) = g$
+ * $F(w) = F(v \circ u) = F(v) \circ F(u) = h \circ g = k$
+#+Beamer: }\only<4>{
+ * $F(u) = f$
+ * $F(v) = \mathrm{id}_c$
+ * $F(w) = F(v \circ u) = F(v) \circ F(u) = \mathrm{id}_c \circ f = f$
+#+Beamer: }\only<5>{
+/Definir un funtor desde la categoría de un triángulo es *elegir un triángulo*./
+#+Beamer: }
+
+** Dibujando un funtor: grafos
+Sean dos categorías, una la llamamos $\rightrightarrows$ la dibujamos a la izquierda y la otra
+es la categoría de conjuntos completa, $\mathsf{Set}$.
+\[\begin{tikzcd}[column sep=huge, row sep=tiny,ampersand replacement=\&]
+a\ar[bend right,swap]{dd}{s} \ar[bend left]{dd}{t} \& \\
+\& \mathsf{Set} \\
+v \& 
+\end{tikzcd}\]
+\pause
+Definir un *funtor* $G$ es elegir:
+
+#+beamer: \begin{columns}\begin{column}{1.2cm}\end{column}\begin{column}{4cm}
+ * un conjunto $G(a)$,
+ * otro conjunto $G(v)$,
+#+beamer: \end{column}\begin{column}{15cm}
+ * función $G(s) \colon G(a) \to G(v)$,
+ * otra función $G(t) \colon G(a) \to G(v)$.
+#+beamer: \end{column}\end{columns}
+
+\pause
+¡Esto es equivalente a definir un grafo! Elegimos un conjunto de aristas,
+uno de vértices, y a cada arista le asignamos un inicio (source) y un final
+(target). /Los *grafos* son funtores de la categoría $\rightrightarrows$ a $\mathsf{Set}$/.
+
+** Ejemplo de funtor: palabras
+Este es un *endofuntor*, es decir, la categoría de partida y la
+categoría de llegada serán la misma, ambas serán $\mathsf{Set}$.
+\[\begin{tikzcd}[ampersand replacement=\&]
+\mathsf{Set} \& \mathsf{Set}
+\end{tikzcd}\]
+
+\pause
+Para definir ese endofuntor $P$, asignamos a cada conjunto $A$ otro
+conjunto $P(A)$, dado por *palabras con letras* en $A$; es decir, si
+$a,b,c \in A$, entonces $abbc, bac, aaac \in P(A)$,  por ejemplo.
+
+\pause
+Cada función $f \colon A \to B$ puede convertirse en una función
+$P(f) \colon P(A) \to P(B)$, que lleva palabras de $A$ en palabras de $B$
+aplicándose sobre cada letra. Por ejemplo:
+\[
+P(f)(aacba) = f(a)f(a)f(c)f(b)f(a)
+\]
+
+** Ejemplo de funtor: listas
+En programación funcional se trabaja con *endofuntores* de la categoría
+de tipos.
+\[\begin{tikzcd}[ampersand replacement=\&]
+\mathsf{Types} \& \mathsf{Types}
+\end{tikzcd}\]
+
+\pause
+Por ejemplo, el *funtor lista* $[-]$ lleva cada tipo =A= al tipo de las
+listas de elementos de =A=, llamado =[A]=. Y lleva cada función del tipo 
+$\mathtt{f\ ::\ A\to B}$
+en una función
+$\mathtt{[f]\ ::\ [A]\to[B]}$
+que se suele llamar =map f=.
+\[
+\mathtt{map\ f\ [a,b,c] = [f\ a,f\ b,f\ c]}.
+\]
