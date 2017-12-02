@@ -1,9 +1,8 @@
 #+Title: Talks
 #+Author: Mario Román
 #+Email: mromang08@gmail.com
-#+OPTIONS: num:nil reveal_mathjax:t toc:nil
-#+REVEAL_THEME: night
-#+REVEAL_TRANS: linear
+#+OPTIONS: H:2
+#+BEAMER_THEME: metropolis
 
 * Emacs
 ** Introducción
