@@ -1,0 +1,428 @@
+#+Title: Cálculo lambda
+#+Author: Mario Román
+#+Email: mromang08@gmail.com
+#+language: es
+#+options: H:2
+#+beamer_theme: metropolis
+
+#+latex_header: \usepackage{tikz-cd}
+#+latex_header: \newcommand\midgreen{\color{green!70!black}}
+#+latex_header: \newcommand\heavygreen{\color{green!20!black}}
+#+latex_header: \newcommand\carg{\color{green!50!black}}
+#+latex_header: \newcommand\cfun{\color{blue!50!black}}
+#+latex_header: \newcommand\cneu{\color{defaultcolor}}
+
+* Expresiones \lambda
+** Origen
+Sistema lógico inventado por *Alonzo Church* sobre el 1930, tratando
+ecuaciones entre expresiones \lambda.  Como lenguaje de programación,
+considerando expresiones sin ecuaciones, es Turing-completo.
+# Esto es, equivalente a una máquina de Turing.
+
+** Expresiones lambda
+Las *expresiones \lambda* pueden ser
+
+\[\mathtt{Expr} := \left\{\begin{array}{ll}
+v, & \mbox{variables, de un conjunto numerable,} \\
+\mathtt{Expr}\ \mathtt{Expr}, & \mbox{aplicación de funciones,} \\
+\lambda v. \mathtt{Expr}, & \mbox{abstracción sobre una variable.}
+\end{array}
+\right.
+\]
+
+#+attr_latex: :options {Ejemplos}
+#+begin_exampleblock
+ - $\midgreen x$, la variable $x$;
+
+ - $\midgreen f\ x$, un término $f$ aplicado a $x$;
+
+ - $\midgreen (\lambda z.z + z)$, la función que toma un argumento y lo duplica;
+
+ - $\midgreen (\lambda x. x^2 + 1)\ 2$, la función que toma $x$ como argumento y devuelve
+   $x^2+1$, aplicada a $2$;
+#+end_exampleblock
+# El resultado es 5 en el último caso
+
+** \beta-reducciones
+En $\midgreen (\lambda x.x + x)\ 2$, sabemos que el resultado final debería ser $4$.
+/¿Cómo se ejecuta o se evalúa una expresión \lambda?/
+
+\pause
+
+#+attr_latex: :options {Beta-reducción}
+#+begin_block
+La \beta-reducción es el proceso de evaluación de una función \lambda
+aplicada sobre un argumento. Se realiza una reducción como
+\[
+\midgreen{(\lambda x. M)\ N} \quad
+\heavygreen{\longrightarrow_{\beta}} \quad 
+\midgreen{M_{[N/x]}}
+\]
+\pause donde
+ - $\midgreen x$ es la variable sobre la que se abstrae; y $\midgreen M$ es una expresión dependiente de $\midgreen x$,
+   es decir, $\midgreen x$ puede aparecer dentro de $\midgreen M$;
+   \pause
+ - $\midgreen (\lambda x.M)$ es una función \lambda que toma un argumento y lo sustituye
+   dentro de $\midgreen M$;
+   \pause
+ - $\midgreen M_{[N/x]}$ es $\midgreen M$, pero con cada $\midgreen x$ sustituida por $\midgreen N$.
+#+end_block
+
+** Ejemplos de \beta-reducción
+En una reducción, una /\cfun{abstracción}/ \lambda se aplica a un /\carg{argumento}/
+
+ * por ejemplo $\cfun{ (\lambda x.x^2 + 1)}\ \carg{3} \cneu \quad\longrightarrow_{\beta}\quad 3^2+1$;
+   \pause
+
+ * el argumento puede ser una función,
+   $\cfun{(\lambda x.x)} \carg{(\lambda x.x)} \cneu \quad\longrightarrow_{\beta}\quad (\lambda x.x)$
+   \pause
+
+ * y una función puede devolver otra
+   $\cfun{(\lambda x.\lambda y.y)}\ \carg{3} \cneu\quad\longrightarrow_{\beta}\quad (\lambda y.y)$
+   \pause
+
+Los nombres de las variables son irrelevantes
+\[
+(\lambda x.x^2+1) \equiv (\lambda y.y^2+1).
+\]
+
+** Primeras definiciones
+A partir de ahora, queremos que todo lo que computamos sea mediante
+expresiones \lambda. Si por ejemplo queremos trabajar con números,
+debemos representarlos como expresiones \lambda.
+
+\pause
+
+#+attr_latex: :options {Primeras definiciones}
+#+begin_block
+ * $\mathtt{id} := (\lambda x.x)$, la función identidad;
+ * $\mathtt{const} := (\lambda x.\lambda y.x)$, la función constante;
+ * $S := (\lambda x.\lambda y.\lambda z. x\ y\ (x\ z))$, otra función de ejemplo.
+#+end_block
+
+** Aplicación parcial
+Escribimos las funciones y sus argumentos separados por espacios
+\[
+\mathtt{const}\ 3\ 4
+\]
+Esto puede interpretarse de dos formas equivalentes: \pause
+
+ * $\mathtt{const}\ 3\ 4$, donde $\mathtt{const}$ es una función en dos argumentos,
+   \pause
+
+ * $(\mathtt{const}\ 3)\ 4$, donde $\mathtt{const}$ es una función en un argumento que
+   a su vez devuelve $(\mathtt{const}\ 3)$, otra función en un argumento que
+   se aplica sobre $4$.
+
+\pause
+Podemos definir funciones parcialmente aplicadas como $\mathtt{siempretres} := \mathtt{const}\ 3$.
+
+* Programando en el cálculo \lambda
+** Forma normal
+:PROPERTIES:
+:BEAMER_OPT: fragile
+:END:
+
+Una expresión está en *forma normal* si no se le pueden aplicar
+más \beta-reducciones. La forma normal es /única/ por el teorema
+de Church-Rosser.
+
+\pause
+
+#+attr_latex: :options {Church-Rosser}
+#+begin_exampleblock
+Si a un término se le aplican distintas reducciones, los términos
+que se obtienen pueden reducirse a uno común
+\[\begin{tikzcd}[row sep=small]
+& A \drar[two heads]{\beta} \dlar[two heads, swap]{\beta} &\\
+B \drar[dashed,swap] && C \dlar[dashed]\\
+& D & \\
+\end{tikzcd}\]
+#+end_exampleblock
+
+** Divergencia
+Hemos demostrado que la forma normal es única, pero no que exista
+o que sepamos encontrarla de alguna forma.
+
+\pause
+
+Puede ocurrir que un término no esté en forma normal y sin embargo
+las reducciones no lo lleven a ella. Por ejemplo,
+\[
+\Omega = (\lambda x.x\ x)(\lambda x.x\ x) \longrightarrow_{\beta} (\lambda x.x\ x)(\lambda x.x\ x)
+\]
+*no llega a forma normal*. \pause O por ejemplo,
+\[
+(\lambda x.x\ x\ x)(\lambda x.x\ x\ x)
+\]
+se hace más complejo al aplicarle reducciones y *diverge*.
+
+** Evaluación a izquierda
+Hay algunas expresiones que llegarán a una forma normal o no
+dependiendo de cómo los evaluemos
+
+ * $\mathtt{const}\ \mathtt{id}\ \Omega \quad\longrightarrow_{\beta}\quad \mathtt{id}$, si evaluamos primero $\mathtt{const}$;
+ * $\mathtt{const}\ \mathtt{id}\ \Omega \quad\longrightarrow_{\beta}\quad \mathtt{const}\ \mathtt{id}\ \Omega$, evaluando primero $\Omega$.
+
+Podemos demostrar el siguiente teorema.
+
+\pause
+
+#+attr_latex: :options {Evaluación a izquierda}
+#+begin_exampleblock
+Si existe una forma normal, la estrategia que reduce a cada paso
+lo más a la izquierda posible la encuentra.
+#+end_exampleblock
+
+# Hay otro teorema que dice que la evaluación a la derecha siempre
+# encuentra la forma de diverger si existe.
+
+* Codificación de Church
+** Estructuras de datos
+Nos gustaría poder describir y usar *estructuras de datos* dentro del
+cálculo \lambda. Cada estructura de datos está definida por un
+conjunto finito de constructores. \pause
+
+ - *Booleanos:* definidos por dos constructores sin argumentos =true=
+   y =false=.
+
+   \pause
+
+ - *Naturales:* por dos constructores, uno unario, =S=, y otro sin
+   argumentos, =Z=.
+
+   - $0$ se escribe como =Z=,
+   - $1$ se escribe como =S Z=,
+   - $2$ se escribe como =S (S Z)=
+   - $\dots$
+
+   \pause
+
+ - *Listas:* por dos constructores, uno para la lista vacía, =nil=,
+   y otro para añadir un elemento a una lista =cons=.
+   
+   - =cons 3 (cons 2 (cons 1 nil))=
+
+** Contenido computacional
+Una primera idea podría ser incluir directamente los constructores
+como constantes del lenguaje.
+
+ - =true=, =false=,
+ - =S=, =Z=.
+  
+\pause
+
+Pero esto no les da contenido computacional, no hay forma de calcular
+o definir funciones sobre ellos porque no pueden reducirse por
+\beta-reducción.
+
+ - =add (S (S Z)) (S Z)=,
+ - =and true false=.
+
+\pause
+
+Necesitamos una interpretación de estos constructores que se pueda
+usar para calcular.
+
+** Codificación de Church
+La idea de la codificación de church es hacer depender a cada instancia
+de la estructura de datos de los constructores. \pause
+Por ejemplo, los números pueden ser funciones dependiendo de =s= y =z=
+
+ - $\lambda s. \lambda z.\ s\ (s\ z)$, sería el número 2, mientras que
+ - $\lambda s. \lambda z.\ s\ (s\ (s\ z))$, sería el número 3.
+
+\pause
+Los booleanos dependen de dos constructores
+
+ - $\lambda t. \lambda f. t$ es la constante =true=,
+ - $\lambda t. \lambda f. f$ es la constante =false=.
+
+** Codificación de Church II
+Esto nos da una interpretación computacional de cada término, el
+natural =n= es una función de orden superior que toman una función y
+un argumento y aplica =n= veces la función sobre el argumento
+\[
+3 \equiv (\lambda f. \lambda x.\ f\ (f\ (f\ x))).
+\]
+\pause
+O los booleanos son funciones que toman dos argumentos y eligen uno
+de ellos
+\[
+\mathrm{true} \equiv (\lambda x.\lambda y.x).
+\]
+Usaremos estas propiedades para programar con ellos.
+* Mikrokosmos - Mario Román                                        :noexport:
+** El intérprete
+Podéis instalarlo desde github si tenéis Haskell y si no, podéis usarlo
+directamente desde la página web
+
+ * https://github.com/m42/mikrokosmos
+ * https://m42.github.io/mikrokosmos/tutorial.html
+
+En Mikrokosmos, las lambdas se escriben como una *barra invertida*, y
+el programa responde con la expresión lambda y una lista de posibles
+nombres que tiene esa expresión.
+
+#+BEGIN_SRC haskell
+mikro> (\x.x)
+λa.a ⇒ I, ifelse, id
+#+END_SRC
+
+Para ver cómo funciona, se pueden probar algunas expresiones aritméticas
+simples
+
+#+BEGIN_SRC haskell
+mult 2 3
+plus 3 4
+and true false
+sum (take 5 naturals)
+#+END_SRC
+
+Características:
+ 
+ * los argumentos van separados por espacios,
+ * se entiende asociatividad a izquierda, y
+ * se permite aplicación parcial.
+
+Es un pequeño lenguaje de programación y está completamente basado en el 
+cálculo lambda. Quiero explicaros cómo se puede obtener un lenguaje de
+programación desde el cálculo lambda.
+
+** Primeras definiciones
+Vamos a usar cálculo lambda. Las expresiones lambdas se leen
+como 
+
+#+BEGIN_SRC haskell
+(\x.\y.plus x y)
+plus 3 4
+(\e.plus e e) 3
+#+END_SRC
+
+Diciendo: esta es una función que toma =x= e =y= y devuelve =x+y=.
+Lo que vamos a aprender es cómo funcionan por dentro los números
+o la función =plus=.
+
+La función *identidad* y la función *constantemente*.
+
+#+BEGIN_SRC haskell
+id = \x.x
+const = \x.\y.x
+
+id id
+id const
+id 3
+id 5
+const 4 2
+const 4 3
+const 4 (id (const id id))
+
+devuelvecuatro = const 4
+devuelvecuatro 5
+#+END_SRC
+
+** Técnica de Church
+Queremos usar estructuras de datos. Tenemos primero que escribir
+la estructura de datos como constructores y hacer depender de ellos
+a los términos.
+
+#+BEGIN_SRC haskell
+true = \t.\f.t
+false = \t.\f.f
+
+0 = \s.\z.z
+1 = \s.\z.s z
+
+cons = \h.\t.\c.\n.c h (t c n)
+nil = \c.\n.n
+#+END_SRC
+
+** Librería
+*** Básica
+#+BEGIN_SRC haskell
+id = \x.x
+const = \x.\y.x
+compose = \g.\f.\x.g (f x)
+#+END_SRC
+
+*** Booleanos
+#+BEGIN_SRC haskell
+true = \x.\y.x
+false = \x.\y.y
+
+not = \p.p false true
+
+and = \p.\q.p q false
+and = \p.\q.p q p
+
+or = \p.\q.p true q
+or = \p.\q.p p q
+#+END_SRC
+
+*** Aritmética básica
+#+BEGIN_SRC haskell
+0 = \f.\x.x
+succ = \n.\f.\x.f (n f x)
+
+plus = \m.\n.n succ m
+plus = \m.\n.(\f.\x.n f (m f x))
+
+mult = \m.\n.compose m n
+mult = \m.\n.\f.\x.m (n f) x
+
+iseven = \n.n not true
+iszero = \n.n (const false) true
+#+END_SRC
+
+*** Tuplas
+#+BEGIN_SRC haskell
+tuple = \x.\y.\z.z x y
+
+first = \p.p true
+second = \p.p false
+
+pred = \n.first (n (\t.tuple (first t) (succ (first t))) (tuple 0 0))
+minus = \m.\n.n pred m
+leq = \m.\n.iszero (minus m n)
+geq = \m.\n.iszero (minus n m)
+#+END_SRC
+
+*** Listas
+#+BEGIN_SRC haskell
+nil = \c.\n.n
+cons = \h.\l.(\c.\n.c h (l c n))
+
+fold = \o.\n.\l.l o n
+
+sum = fold plus 0
+prod = fold mult 1
+all = fold and true
+any = fold or false
+length = fold (\h.\t.)
+
+map = \f.fold (\h.\t.cons (f h) t) nil
+filter = \p.fold (\h.t.(p h) (cons h t) t) nil
+
+head = fold const nil
+tail = \l.first (l (\a.\t.tuple (second t) (cons a (second t))) (tuple nil nil))
+take = \n.\l.first (n (\t.tuple (cons (head (second t)) (first t)) (tail (second t))) (tuple nil l))
+#+END_SRC
+
+*** Árboles
+#+BEGIN_SRC haskell
+nil = \d.\n.n
+node = \x.\l.\r.\d.\n.(d x (l d n) (r d n))
+#+END_SRC
+
+*** Recursión
+#+BEGIN_SRC haskell
+omega := (\x.x x)(\x.x x)
+fix := (\f.(\x.f (x x)) (\x.\f (x x)))
+
+fact := fix (\f.\n.iszero n 1 (mult n (f (pred n))))
+fib :=  fix (\f.\n.iszero n 1 (plus (f (pred n)) (f (pred (pred n)))))
+
+infinity := fix succ
+naturals := fix (compose (cons 0) (map succ))
+#+END_SRC
