@@ -1,0 +1,1171 @@
+#+Title: Categorías cartesianas
+#+Author: Mario Román
+#+Email: mromang08@gmail.com
+#+language: es
+#+options: H:2
+#+beamer_theme: metropolis
+
+#+latex_header: \usepackage{tikz-cd}
+#+latex_header: \usepackage{bussproofs}
+#+latex_header: \usepackage{amssymb} \usepackage{mathtools} \usepackage{amsmath}
+#+latex_header: \EnableBpAbbreviations{}
+#+latex_header: \newcommand\midgreen{\color{green!70!black}}
+#+latex_header: \newcommand\heavygreen{\color{green!20!black}}
+#+latex_header: \newcommand\carg{\color{green!50!black}}
+#+latex_header: \newcommand\cfun{\color{blue!50!black}}
+#+latex_header: \newcommand\cneu{\color{defaultcolor}}
+#+latex_header: \usepackage{multicol}
+#+latex_header: \definecolor{redPRL}{HTML}{ad2231}
+#+latex_header: \definecolor{bluePRL}{HTML}{07608f}
+#+latex_header: \definecolor{greenPRL}{HTML}{078f60}
+#+latex_header: \colorlet{myred}{redPRL}
+#+latex_header: \colorlet{myblue}{bluePRL}
+#+latex_header: \newcommand{\red}[1]{{\color{myred}{{#1}}}}
+#+latex_header: \newcommand{\blue}[1]{{\color{myblue}{{#1}}}}
+#+latex_header: \newcommand{\green}[1]{{\color{greenPRL}{{#1}}}}
+#+latex_header: \DeclarePairedDelimiter\pair{\langle}{\rangle} % Pair notation
+
+
+* Cálculo lambda simplemente tipado
+** Cálculo lambda: fragmento negativo
+:PROPERTIES:
+:BEAMER_OPT: fragile
+:END:
+
+Tomamos un cálculo lambda muy simple con tres constructores
+de tipos. Un tipo con un solo elemento $1$, un producto para
+cada dos tipos, y el tipo función entre dos tipos cualquiera.
+\begin{prooftree}
+\AXC{}   
+\UIC{$\Gamma \vdash \green{\ast} : 1$}
+\AXC{$\Gamma \vdash \green{a} : A$}
+\AXC{$\Gamma \vdash \green{b} : B$}
+\BIC{$\Gamma \vdash \green{\pair{a,b}} : A \times B$}
+\AXC{$\Gamma, \green{a} : A \vdash \green{b} : B$}  
+\UIC{$\Gamma \vdash \green{(\lambda a.b)} : A \to B$}
+\noLine
+\TIC{}
+\end{prooftree}
+
+\pause
+Con ciertas constantes y reglas de eliminación (simplificación),
+
+ * proyecciones $\green{\pi_1},\green{\pi_2}$ cumpliendo $\green{\pi_1 \pair{a,b}} \equiv \green{a}$ y $\green{\pi_2 \pair{a,b}} \equiv \green{b}$, y
+ * evaluación de funciones $\green{(\lambda a.b)\ a_0} \equiv \green{b[a_0/a]}$.
+
+Y ciertas reglas de unicidad.
+
+** Cálculo lambda: fragmento positivo
+:PROPERTIES:
+:BEAMER_OPT: fragile
+:END:
+
+Además de los tipos anteriores, podemos añadir un tipo vacío $0$ y
+un tipo unión $A + B$.
+\begin{prooftree}
+\AXC{$\Gamma \vdash \green{z}:0$}
+\UIC{$\Gamma \vdash \green{\mathrm{abort}} : C$}
+\AXC{$\Gamma, \green{a}:A \vdash \green{c} : C$}
+\AXC{$\Gamma, \green{b}:B \vdash \green{c'} : C$}
+\BIC{$\Gamma, \green{u} : A+B \vdash \green{\mathrm{case}\ u\ \mathrm{of}\ c;c'} : C$}
+\noLine
+\BIC{}
+\end{prooftree}
+
+Donde el tipo vacío no necesita reglas de evaluación porque
+no se puede construir de ninguna forma y el tipo unión tiene
+como reglas el análisis por casos usual.
+
+** Como lenguaje de programación
+El cálculo lambda sin tipos es un modelo de computación; el
+cálculo lambda con tipos es la base de los lenguajes funcionales
+de programación.
+
+\pause
+
+#+BEGIN_SRC haskell
+-- Haskell
+map (\x -> x+2) [1,2,3] -- [3,4,5]
+id = \x -> x            -- Define la identidad
+#+END_SRC
+
+\pause
+
+#+BEGIN_SRC haskell
+-- Mikrokosmos
+swap = \pair.(snd pair, fst pair)
+id = \x.x
+ifelse false 4 3
+#+END_SRC
+
+** Ejercicios
+:PROPERTIES:
+:BEAMER_OPT: fragile
+:END:
+
+Encontrar términos lambda de tipo:
+
+ * $(A \times B \to C) \to (A \to B \to C)$
+
+ * $(((A \to B) \to A \to A) \to B) \to B$
+
+ * $(A + B \to C) \to (A \to C) \times (B \to C)$
+
+ * $A \to ((A \to \bot) \to \bot)$
+
+
+* Algunas categorías útiles
+** Conjuntos
+:PROPERTIES:
+:BEAMER_OPT: fragile
+:END:
+
+$\mathsf{Set}$, es la categoría de conjuntos y funciones entre conjuntos.
+Los objetos son conjuntos y los morfismos son funciones entre
+los conjuntos.
+
+\[\begin{tikzcd}
+A \ar[loop above]{}{\textrm{id}} \rar{f}\drar[swap]{g \circ f} & B \dar{g} \\
+          & C
+\end{tikzcd}\]
+
+** Conjuntos en pares
+:PROPERTIES:
+:BEAMER_OPT: fragile
+:END:
+
+$\mathsf{Set} \times \mathsf{Set}$, la categoría de pares de conjuntos $A,B$ con
+pares de funciones entre ellos. Nótese que los pares
+de funciones son completamente independientes y que la
+composición se hace por componentes.
+
+\[\begin{tikzcd}
+A,A' \ar[loop above]{}{\textrm{id},\textrm{id}} \rar{f,f'}
+\drar[swap]{g \circ f,g' \circ f'} & B,B' \dar{g,g'} \\
+& C,C'
+\end{tikzcd}\]
+
+/Podría generalizarse a productos arbitrarios sobre $\mathsf{Set}$/.
+
+** Conjuntos en tiempo discreto
+:PROPERTIES:
+:BEAMER_OPT: fragile
+:END:
+
+$\mathsf{Set}^{\mathbb{N}}$ es la categoría de los conjuntos bajo un
+parámetro discreto que puede interpretarse como un
+parámetro temporal.  Los objetos son secuencias de
+funciones de avance temporal $a_i$ de la forma
+\[\begin{tikzcd}
+A_0 \rar{a_0} & A_1 \rar{a_1} & A_2 \rar{a_2} & \cdots.
+\end{tikzcd}\]
+Hay una única función entre $A_n \to A_m$ para cada $n < m$.
+
+Y un morfismo $f \colon A_n \to B_n$ es un diagrama conmutativo en
+cada instante de tiempo:
+\[\begin{tikzcd}
+A_0 \dar{f_0}\rar{a_0} & A_1 \dar{f_1} \rar{a_1} & A_2 \dar{f_2} \rar{a_2} & \cdots \\
+B_0 \rar{b_0} & B_1  \rar{b_1} & B_2  \rar{b_2} & \cdots
+\end{tikzcd}\]
+
+** Conjuntos en tiempo continuo
+:PROPERTIES:
+:BEAMER_OPT: fragile
+:END:
+
+$\mathsf{Set}^{\mathbb{R}}$ es la categoría de los conjuntos bajo un
+parámetro temporal continuo en $\mathbb{R}$.  Los objetos
+son secuencias temporales $\left\{ A_r \right\}$ donde hay una
+única función $A_r \to A_s$ cuando $r < s$.
+
+Un morfismo entre conjuntos temporales debe
+cumplir
+\[\begin{tikzcd}
+A_r \dar{f_r}\rar{a_{rs}} & A_s \dar{f_s} \\
+B_r \rar{b_{rs}} & B_s
+\end{tikzcd}\]
+para cualesquiera $r,s \in \mathbb{R}$. Generalizamos a
+conjuntos sobre cualquier preorden; estamos escribiendo
+generalizaciones de la teoría de conjuntos.
+
+** Grafos
+:PROPERTIES:
+:BEAMER_OPT: fragile
+:END:
+
+La categoría de grafos puede derivarse desde la categoría
+de conjuntos tomando
+\[\begin{tikzcd}
+E \rar[bend left]{s} \rar[bend right,swap]{t} & V
+\end{tikzcd}\]
+
+Los morfismos son transformaciones naturales entre estructuras
+de este tipo.
+\[\begin{tikzcd}
+E \rar\dar[bend left]\dar[bend right] & E' \dar[bend left]\dar[bend right] \\
+V \rar& V'
+\end{tikzcd}\]
+
+** Álgebras de Heyting
+:PROPERTIES:
+:BEAMER_OPT: fragile
+:END:
+
+Consideramos un conjunto de proposiciones como objetos
+y las implicaciones entre ellas como morfismos. Dadas
+dos proposiciones $P,Q$, tenemos las proposiciones $P \wedge Q$,
+$P \vee Q$, $P \to Q$, $\bot$, $\top$.
+
+\[\begin{tikzcd}
+P \ar[loop above]{}{} \rar{}\drar[swap]{} & Q \dar{} \\
+          & R
+\end{tikzcd}\]
+
+Sólo consideramos que existe como mucho un único
+morfismo entre dos proposiciones cualesquiera.
+/Otro ejemplo son los abiertos de un espacio topológico./
+
+** Teoría de los naturales
+:PROPERTIES:
+:BEAMER_OPT: fragile
+:END:
+
+Podemos tener una categoría con objetos $1,\mathbb{N},\mathbb{N}^2,\mathbb{N}^3,\dots$ y 
+un objeto de valores de verdad $\Omega$ (podemos suponer $\Omega = \left\{ 0,1 \right\}$).
+Consideramos también como objetos productos de estos objetos,
+como $\mathbb{N}^2 \times \Omega$.
+
+Los morfismos $A_0 \times \dots \times A_k \to B$ son expresiones en lógica
+de primer orden y aritméticas que toman variables de tipo
+$A_0,\dots,A_k$.
+
+** Espacios topológicos bajo ciertas condiciones
+:PROPERTIES:
+:BEAMER_OPT: fragile
+:END:
+
+La categoría $\mathsf{Top}$ de todos los espacios topológicos no servirá
+como categoría cartesiana cerrada. Podemos considerar variantes
+que sí funcionan correctamente:
+
+ * $\mathsf{CgTop}$, espacios topológicos Hausdorff compactamente generados.
+
+ * $\mathsf{STop}$, espacios topológicos secuenciales.
+
+ * $\mathsf{SSet}$, conjuntos simpliciales. También funcionan los complejos
+   simpliciales y construcciones similares.
+
+Así llegaríamos a una teoría sintética de la continuidad.
+
+** Otros ejemplos
+
+ * $\mathsf{FinSet}$, la categoría de conjuntos finitos con todas las funciones
+   entre ellos.
+
+ * $G\mathsf{Set}$, conjuntos sobre los que actúa un grupo $G$.
+
+ * El /topos efectivo/ es una categoría en la que los morfismos
+   son funciones computables. Permite una teoría de la computabilidad
+   sintética.
+
+* Estructura cartesiana cerrada
+** Unidad
+Llamamos $\green{1}$ al tipo unidad, un tipo con un solo término. Bajo
+cualquier contexto $\Gamma$ podemos crear el único término de ese tipo,
+al que llamamos $\ast$.
+\begin{prooftree}
+\AXC{}   
+\UIC{$\Gamma \vdash \green{\ast} : 1$}
+\end{prooftree}
+
+\pause
+En algunas categorías existe un objeto $1$. Su propiedad es que
+desde cualquier objeto $\Gamma$, existe un único morfismo hacia él, que
+llamamos $\ast$.
+\begin{prooftree}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&] \end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] \Gamma \rar{\ast}\& \blue{1} \end{tikzcd}}
+\end{prooftree}
+
+** Unidad: en categorías
+
+ * $\mathsf{Set}$: dado cualquier conjunto $A$ existe una única función
+   $A \to \left\{ \ast \right\}$, al /conjunto de un solo elemento/.
+   \pause
+
+ * En lógica, cualquier proposición implica la proposición
+   verdadera $A \to \top$.
+
+** Producto
+Dados dos tipos cualesquiera, $A$ y $B$; tenemos un tipo
+producto de ambos tipos, $A \times B$.
+\begin{prooftree}
+\AXC{$\Gamma \vdash \green{a} : A$}
+\AXC{$\Gamma \vdash \green{b} : B$}
+\BIC{$\Gamma \vdash \green{\pair{a,b}} : A \times B$}
+\end{prooftree}
+
+\pause
+En algunas categorías, dados dos objetos $A \times B$, existe
+un objeto producto cumpliendo la regla siguiente.
+\begin{prooftree}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&]
+C \rar{f}\& A \& C \rar{g}\& B
+\end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{\pair{f,g}}\& A \;\blue{\times}\; B \end{tikzcd}}
+\end{prooftree}
+
+** Producto: en categorías
+
+ * $\mathsf{Set}$: dados dos conjuntos, $A$ y $B$, existe su producto
+   cartesiano $A \times B$.
+
+ * $\mathsf{Graph}$: puede construirse el grafo producto de dos
+   grafos, teniendo como vértices pares de vértices y
+   aristas entre los pares $(a,b)$ y $(a',b')$ cuando hay
+   una arista entre ellos.
+
+ * En lógica, cualesquiera dos proposiciones tienen
+   una conjunción $A \times B$.
+
+ * En nuestra teoría aritmética, considerábamos productos
+   formales, $\mathbb{N} \times \Omega$, por ejemplo. Podríamos tener $\mathbb{N} \times \mathbb{N} \cong \mathbb{N}$.
+
+** Exponencial
+Llamamos $A \to B$ al tipo de las funciones entre dos
+tipos $A$ y $B$. Si podemos construir algo de tipo $B$
+desde algo de tipo $A$, tenemos una función lambda.
+\begin{prooftree}
+\AXC{$\Gamma, \green{a} : A \vdash \green{b} : B$}  
+\UIC{$\Gamma \vdash \green{(\lambda a.b)} : A \to B$}
+\end{prooftree}
+
+\pause
+En algunas categorías, hay un objeto $B^{A}$ que representa
+los morfismos $A \to B$ en esa categoría.
+\begin{prooftree}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&] \Gamma \red{\times A} \rar{\green{b_a}}\& B \end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] \Gamma \rar{\green{\lambda a.b_a}}\& B^{\blue{A}} \end{tikzcd}}
+\end{prooftree}
+
+** Exponencial: en categorías
+
+ * $\mathsf{Set}$: dados dos conjuntos, $A$ y $B$, existe el conjunto
+   de funciones entre ellos $\mathrm{hom}(A, B)$.
+
+ * En lógica, dadas dos proposiciones, existe la proposición
+   implicación entre ellas $(P \to Q)$, que es cierta cuando
+   una implica a la otra. 
+
+** Traducción entre categorías y cálculo lambda
+Tenemos categorías cartesianas con tres adjunciones.
+
+#+beamer: \only<1>{
+\begin{prooftree}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&] \red{\ast} \rar{}\& \ast \end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{!}\& \blue{1} \end{tikzcd}}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&] \red{\Delta}\; C \rar{f,g}\& A,B \end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{\pair{f,g}}\& A \;\blue{\times}\; B \end{tikzcd}}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \red{\times A} \rar{f}\& B \end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{\widetilde{f}}\& B^{\blue{A}} \end{tikzcd}}
+\noLine
+\TIC{}
+\end{prooftree}
+#+beamer: }
+#+beamer: \only<2>{
+\begin{prooftree}
+\AXC{}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{\green{\ast}}\& \blue{1} \end{tikzcd}}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&] \red{\Delta}\; C \rar{f,g}\& A,B \end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{\pair{f,g}}\& A \;\blue{\times}\; B \end{tikzcd}}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \red{\times A} \rar{f}\& B \end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{\widetilde{f}}\& B^{\blue{A}} \end{tikzcd}}
+\noLine
+\TIC{}
+\end{prooftree}
+#+beamer: }
+#+beamer: \only<3>{
+\begin{prooftree}
+\AXC{}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{\green{\ast}}\& \blue{1} \end{tikzcd}}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&] C,C \rar{f,g}\& A,B \end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{\pair{f,g}}\& A \;\blue{\times}\; B \end{tikzcd}}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \red{\times A} \rar{f}\& B \end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{\widetilde{f}}\& B^{\blue{A}} \end{tikzcd}}
+\noLine
+\TIC{}
+\end{prooftree}
+#+beamer: }
+#+beamer: \only<4>{
+\begin{prooftree}
+\AXC{}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{\green{\ast}}\& \blue{1} \end{tikzcd}}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&,column sep=small] C \rar{\green{f}}\& A \& C \rar{\green{g}}\& B \end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{\green{\pair{f,g}}}\& A \;\blue{\times}\; B \end{tikzcd}}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \red{\times A} \rar{f}\& B \end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{\widetilde{f}}\& B^{\blue{A}} \end{tikzcd}}
+\noLine
+\TIC{}
+\end{prooftree}
+#+beamer: }
+#+beamer: \only<5>{
+\begin{prooftree}
+\AXC{}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{\green{\ast}}\& \blue{1} \end{tikzcd}}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&,column sep=small] C \rar{\green{f}}\& A \& C \rar{\green{g}}\& B \end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{\green{\pair{f,g}}}\& A \;\blue{\times}\; B \end{tikzcd}}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \red{\times A} \rar{\green{f_a}}\& B \end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{\green{\lambda a.f_a}}\& B^{\blue{A}} \end{tikzcd}}
+\noLine
+\TIC{}
+\end{prooftree}
+#+beamer: }
+#+beamer: \only<6>{
+\begin{prooftree}
+\AXC{}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{\green{\ast}}\& \blue{1} \end{tikzcd}}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&,column sep=small] C \rar{\green{f}}\& A \& C \rar{\green{g}}\& B \end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{\green{\pair{f,g}}}\& A \;\blue{\times}\; B \end{tikzcd}}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \red{\times A} \rar{\green{f_a}}\& B \end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{\green{\lambda a.f_a}}\& B^{\blue{A}} \end{tikzcd}}
+\noLine
+\TIC{}
+\end{prooftree}
+#+beamer: }
+#+beamer: \only<7>{
+\begin{prooftree}
+\AXC{}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] \Gamma \rar{\green{\ast}}\& \blue{1} \end{tikzcd}}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&,column sep=small] \Gamma{} \rar{\green{a}}\& A \& \Gamma{} \rar{\green{b}}\& B \end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] \Gamma \rar{\green{\pair{a,b}}}\& A \;\blue{\times}\; B \end{tikzcd}}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&] \Gamma \red{\times A} \rar{\green{b_a}}\& B \end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] \Gamma \rar{\green{\lambda a.b_a}}\& B^{\blue{A}} \end{tikzcd}}
+\noLine
+\TIC{}
+\end{prooftree}
+#+beamer: }
+
+Y un cálculo lambda con tres reglas.
+\begin{prooftree}
+\AXC{}   
+\UIC{$\Gamma \vdash \green{\ast} : 1$}
+\AXC{$\Gamma \vdash \green{a} : A$}
+\AXC{$\Gamma \vdash \green{b} : B$}
+\BIC{$\Gamma \vdash \green{\pair{a,b}} : A \times B$}
+\AXC{$\Gamma, \green{a} : A \vdash \green{b} : B$}  
+\UIC{$\Gamma \vdash \green{(\lambda a.b)} : A \to B$}
+\noLine
+\TIC{}
+\end{prooftree}
+
+Reescribimos para comprobar que son similares.
+
+** Resumen
+:PROPERTIES:
+:BEAMER_OPT: fragile
+:END:
+
+Cada expresión en cálculo lambda puede interpretarse en
+cualquier categoría cartesiana cerrada.
+
+\pause
+
+ 1. Los morfismos $f \colon \Gamma \to A$ son los términos de tipo $A$
+    sobre el contexto $\Gamma$.\pause
+
+ 2. $\Gamma \times A$ es el contexto $\Gamma$ más un elemento de tipo $A$,
+    y $1$ es el contexto vacío.\pause
+
+ 3. Los términos sobre un contexto vacío (programas)
+    que devuelven algo de tipo $A$ son morfismos $\ast \to A$
+    (elementos de $A$).
+
+\pause
+Técnicamente, para cada teoría de cálculo lambda existe
+una categoría sintáctica y para cada categoría cartesiana
+existe un lenguaje de cálculo lambda interno. Salvo equivalencias,
+se comportan como inversos.
+
+** Ejemplo: swap
+Un programa en cálculo lambda
+#+BEGIN_SRC haskell
+swap :: A x B -> B x A
+swap = \pair.(snd pair, fst pair)
+#+END_SRC
+se traduce a una construcción en categorías.
+\[\begin{tikzcd}[row sep=small]
+&& A & 1 \ar{dd}{\lambda p.(\pi_2 p, \pi_1 p)}  \\
+A \times B 
+\ar[dashed]{r}{(\pi_2,\pi_1)}
+\ar[bend left=20]{urr}{\pi_1}
+\ar[bend right=20]{drr}[swap]{\pi_2}  & 
+B \times A \urar[swap]{\pi_2}\drar{\pi_1} && \\
+&& B & \mathrm{hom}(A \times B, B \times A)\\
+\end{tikzcd}\]
+
+* Argumentos diagonales
+** Teorema del punto fijo (W. Lawvere)
+En una categoría cartesiana cerrada, decimos que $f \colon A \to B$ es
+*puntualmente sobreyectiva* si, para cada $b : B$ existe un $a : A$
+tal que $f(a) = b$. \pause
+
+#+beamer: \metroset{block=fill}
+#+attr_latex: :options {Teorema del punto fijo}
+#+begin_exampleblock
+Si existe $d \colon A \to B^A$ puntualmente sobreyectiva, entonces cada
+$f \colon B \to B$ tiene un punto fijo, un $b : B$ tal que $f(b) = b$.
+#+end_exampleblock
+\pause
+
+/Demostración./
+/Como $d$ es puntualmente sobreyectiva, existe $x : A$ tal que/
+/$d(x) \equiv \lambda a. f(d(a,a))$/; /pero entonces se tiene el punto fijo/
+\[
+d(x,x) \equiv (\lambda a.f(d(a,a))) \equiv f(d(x,x)).
+\]
+
+** Corolario: Teorema de Cantor
+#+beamer: \metroset{block=fill}
+#+attr_latex: :options {Teorema del punto fijo}
+#+begin_exampleblock
+Si existe $d \colon A \to B^A$ puntualmente sobreyectiva, entonces cada
+$f \colon B \to B$ tiene un punto fijo, un $b : B$ tal que $f(b) = b$.
+#+end_exampleblock
+
+En $\mathsf{Set}$, sea $f \colon 2 \to 2$ la permutación no trivial del conjunto
+de dos elementos. Nótese que $f$ no puede tener puntos fijos,
+así que no puede existir $d \colon A \to 2^{A}$ puntualmente sobreyectiva.
+
+Así, $A$ no es isomorfo a ${\cal P}(A)$. En particular, ${\cal P}(\mathbb{N})$ no
+es numerable.
+
+** Corolario: Teorema de Russell
+#+beamer: \metroset{block=fill}
+#+attr_latex: :options {Teorema del punto fijo}
+#+begin_exampleblock
+Si existe $d \colon A \to B^A$ puntualmente sobreyectiva, entonces cada
+$f \colon B \to B$ tiene un punto fijo, un $b : B$ tal que $f(b) = b$.
+#+end_exampleblock
+
+Supongamos una clase de todos los conjuntos $\mathrm{Sets}$ sobre la que podemos
+expresar propiedades $P \colon \mathrm{Sets} \to 2$. Si asumimos que toda propiedad en
+la clase de los conjuntos corresponde a un conjunto por comprensión
+$\left\{ y \in \mathrm{Sets} \mid P(y) \right\}$. Entonces habría una función sobreyectiva en puntos
+$\mathrm{Sets} \to 2^\mathrm{Sets}$ y toda función $f \colon 2 \to 2$ tendría un punto fijo.
+
+** Corolario: Teorema de Gödel
+#+beamer: \metroset{block=fill}
+#+attr_latex: :options {Teorema del punto fijo}
+#+begin_exampleblock
+Si existe $d \colon A \to B^A$ puntualmente sobreyectiva, entonces cada
+$f \colon B \to B$ tiene un punto fijo, un $b : B$ tal que $f(b) = b$.
+#+end_exampleblock
+
+#+beamer: \only<1>{
+#+begin_quote
+The original aim of this article was to demystify the incompleteness
+theorem of Gödel and the truth-definition theory of Tarski by showing
+that both are consequences of some very simple algebra in the
+cartesian-closed setting.
+
+-- W. Lawvere, Diagonal arguments and cartesian closed categories (2006).
+#+end_quote
+#+beamer: }\only<2>{
+Tenemos una categoría cartesiana cerrada generada por los objetos
+$1,\mathbb{N},\mathbb{N}^2,\mathbb{N}^{3}\dots$ y un objeto $\Omega$ que representa valores de verdad.
+Los morfismos $A \to B$ son expresiones sintácticas en una teoría
+que toman una variable de tipo $A$ y devuelven algo de tipo $B$. Es
+
+ * *consistente* si hay un $\mathrm{not} \colon \Omega \to \Omega$ sin puntos fijos. Y tiene
+ * *satisfacibilidad* si existe $\mathrm{sat} \colon \mathbb{N} \times \mathbb{N} \to \Omega$,
+   tal que cada predicado $\varphi \colon \mathbb{N} \to \Omega$ sea de la forma $\mathrm{sat}(n)$ para algún $n$,
+   al que llamamos /número de Gödel/ del predicado.
+
+Cualquier teoría suficientemente fuerte como para que satisfacibilidad
+sea definible es inconsistente.
+#+beamer: }
+
+* Extensiones
+** Bicartesianas cerradas
+:PROPERTIES:
+:BEAMER_OPT: fragile
+:END:
+
+Incluimos sumas y un objeto final. Dicho de otra forma,
+incluimos un tipo unión y un tipo vacío.
+
+\begin{prooftree}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&] \ast \rar{}\& \ast \end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] 0 \rar{!}\& C \end{tikzcd}}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&] A,B \rar{f,g}\& C,C \end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] A + B \rar{f + g}\& C \end{tikzcd}}
+\noLine
+\BIC{}
+\end{prooftree}
+
+** System T
+:PROPERTIES:
+:BEAMER_OPT: fragile
+:END:
+
+Incluimos los números naturales.
+
+\begin{center}\begin{array}{lll}
+\begin{tikzcd}
+1+\mathbb{N}\rar{} \dar[swap]{\pair{0,\mathrm{succ}}} & 
+1+C\dar{\pair{x,f}} \\
+\mathbb{N}\rar{ \mathrm{ind}\ x\ f} &
+C \end{tikzcd} &  \qquad & 
+\begin{gathered}
+\mathrm{ind} \colon C \to (C \to C) \to (\mathbb{N} \to C)  \\
+\mathrm{ind}\ x\ f \ 0 \equiv x \\
+\mathrm{ind}\ x\ f\ (S\ n) \equiv f\ (\mathrm{ind}\ x\ f\ n)
+\end{gathered}\end{array}\end{center}
+
+** Álgebras iniciales: la suma
+:PROPERTIES:
+:BEAMER_OPT: fragile
+:END:
+
+Definiendo la suma.
+
+\[\begin{tikzcd}
+1+\mathbb{N}\rar{} \dar[swap]{\pair{0,succ}} & 
+1+\hom(\mathbb{N},\mathbb{N}) \dar{\pair{\mathrm{id}, \mathrm{succ}\,\circ\, -}} \\
+\mathbb{N}\rar{+} &
+\hom(\mathbb{N},\mathbb{N})
+\end{tikzcd}\]
+
+** Álgebras iniciales: listas
+:PROPERTIES:
+:BEAMER_OPT: fragile
+:END:
+
+\[\begin{tikzcd}
+1+ A \times \mathrm{List}(A) \rar{} \dar[swap]{\pair{\mathrm{nil} , \mathrm{cons}}} & 
+1 + A \times X \dar{\pair{x,\bullet}} \\
+\mathrm{List}(A) \rar{\varphi} &
+X
+\end{tikzcd}\]
+
+** Martin-Löf
+:PROPERTIES:
+:BEAMER_OPT: fragile
+:END:
+
+Incluimos funciones y pares dependientes. Podemos usar
+cuantificadores universales y existenciales.
+
+\[\begin{tikzcd}
+\intr{\Gamma} \rar{b} \drar[equal] \ar[bend left]{rr}{\pair{a,b}} & 
+\intr{\Gamma,y : B(a)} \dar\rar &
+\intr{\Gamma,x:A,y:B} \dar{\pi_B} \ar[bend left=70]{dd}{\pi_{\Sigma}} \\
+& \intr{\Gamma} \rar{a}\drar[equal] & \intr{\Gamma, x : A} \dar{\pi_A} \\
+&& \intr{\Gamma}
+\end{tikzcd}\]
+
+\begin{prooftree}
+\AXC{$\Gamma \vdash a : A$}
+\AXC{$\Gamma \vdash b : B[a/x]$}
+\BIC{$\Gamma \vdash \pair{a,b} : \sum_{x:A}B$}
+\end{prooftree}
+
+** Igualdad en teoría de Martin-Löf
+:PROPERTIES:
+:BEAMER_OPT: fragile
+:END:
+
+La igualdad se puede obtener en este contexto relacionada a un
+morfismo diagonal para cada tipo.
+
+\[\begin{array}{lll}\begin{tikzcd}
+\phantom{f}\vartriangle^{\ast}\!\! C \rar\dar & C\dar{g} \\
+A\rar{\vartriangle}\uar[dashed,bend left]{\widetilde k} & A\times A
+\end{tikzcd} &\qquad& \begin{tikzcd}[column sep=tiny]
+A \drar[swap]{\vartriangle}\ar[dashed]{rr}{k} && C\dlar{g} \\
+& A\times A &
+\end{tikzcd}\end{array}\]
+
+\[\begin{prooftree}
+\AXC{$\Gamma \vdash a : A$}
+\noLine
+\UIC{$\Gamma, x : A \vdash c:C(x,x)$}
+\AXC{$\Gamma \vdash b : A$}
+\noLine
+\UIC{$\Gamma \vdash p : a = b$}
+\BIC{$\Gamma \vdash J_C(c,p) : C(a,b)$}
+\end{prooftree}\]
+
+* TODO Adjunciones
+** Definición de adjunción
+Sean dos funtores $F \colon {\cal C} \to {\cal D}$ y $G \colon {\cal D} \to {\cal C}$. 
+Una adjunción entre ellos, $\red{F} \dashv \blue{G}$, viene dada por una
+biyección 
+\[
+\varphi \colon \mathrm{hom}(\red{F}X,Y) \cong \mathrm{hom}(X,\blue{G}Y)
+\]
+para cada $X \in {\cal C}, Y \in {\cal D}$. \pause La dibujamos como.
+\begin{prooftree}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&] 
+\red{F}X \rar{f}\& Y \end{tikzcd}}
+\doubleLine 
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] 
+X \rar{\varphi{(f)}} \& \blue{G}Y \end{tikzcd}}
+\end{prooftree}
+\pause Además se exigen ciertas condiciones de /naturalidad/.
+
+** Condiciones de naturalidad
+#+beamer: \metroset{block=fill}
+#+attr_latex: :options {Condiciones de naturalidad}
+#+begin_exampleblock
+\[
+\varphi(f \circ Fh) = \varphi(f) \circ h \qquad \varphi(k \circ f) = Gk \circ \varphi(f)
+\]
+#+end_exampleblock
+\pause Se dibujan como:
+\begin{prooftree}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&] 
+\red{F}X' \ar[bend left=45]{rr}{f \circ Fh} \rar{\red{F}h}\& 
+\red{F}X \rar{f}\& 
+Y
+\end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&]
+X' \ar[bend right=45]{rr}[swap]{\varphi(f) \circ h} \rar[swap]{h}\& 
+X \rar[swap]{\varphi(f)}\&
+\blue{G}Y 
+\end{tikzcd}}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&]
+\red{F}X \ar[bend left=45]{rr}{k \circ f} \rar{f}\&
+Y \rar{k}\&
+Y' \end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&]
+X \ar[bend right=45]{rr}[swap]{Gk \circ \varphi(f)} \rar[swap]{\varphi(f)}\&
+\blue{G}Y \rar[swap]{\blue{G}k}\&
+\blue{G}Y'\end{tikzcd}}
+\noLine
+\BIC{}
+\end{prooftree}
+\pause
+/Unicidad:/ con esta definición, se demuestra que si $\red{F} \dashv \blue{G}$
+y $\red{F'} \dashv \blue{G}$, entonces $\red{F} \cong \red{F'}$. Los adjuntos son esencialmente únicos.
+
+** Ejemplo: grupos libres
+Entre la categoría de los conjuntos y la categoría de los grupos,
+el funtor grupo libre $\red{\langle} - \red{\rangle} \colon \mathsf{Set} \to \mathsf{Grp}$ y el funtor que olvida la
+estructura de grupo $\blue{{\cal U}} \colon \mathsf{Grp} \to \mathsf{Set}$.
+\pause
+\begin{prooftree}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&] 
+\red{\langle}X\red{\rangle} \rar{f}\& Y \end{tikzcd}}
+\doubleLine 
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] 
+X \rar{\varphi{(f)}} \& \blue{{\cal U}}Y \end{tikzcd}}
+\end{prooftree}
+
+\pause
+Los homomorfismos de grupos del grupo libre a otro grupo están
+en biyección con las funciones arbitrarias entre los conjuntos
+subyacentes. \pause
+#+beamer: \metroset{block=fill}
+#+attr_latex: :options {Condiciones de naturalidad}
+#+begin_exampleblock
+\[
+\varphi(f \circ Fh) = \varphi(f) \circ h \qquad \varphi(k \circ f) = Gk \circ \varphi(f)
+\]
+#+end_exampleblock
+
+** Ejemplo: topología discreta y topología trivial
+Sea el funtor ${\cal U} \colon \mathsf{Top} \to \mathsf{Set}$ que envía cada espacio topológico
+a su conjunto subyacente. Tiene un adjunto a la derecha y otro
+a la izquierda.
+\pause
+\begin{prooftree}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&] 
+\red{\tau_d}X \rar{f}\& Y \end{tikzcd}}
+\doubleLine 
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&]
+X \rar{\varphi{(f)}} \& \blue{{\cal U}}Y \end{tikzcd}}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&] 
+\red{{\cal U}}X \rar{f}\& Y \end{tikzcd}}
+\doubleLine 
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&]
+X \rar{\varphi{(f)}} \& \blue{\tau_t}Y \end{tikzcd}}
+\noLine
+\BIC{}
+\end{prooftree}
+Que son la topología discreta y la topología trivial. Hay
+una cadena $\tau_d \dashv {\cal U} \dashv \tau_t$. \pause
+#+beamer: \metroset{block=fill}
+#+attr_latex: :options {Condiciones de naturalidad}
+#+begin_exampleblock
+\[
+\varphi(f \circ Fh) = \varphi(f) \circ h \qquad \varphi(k \circ f) = Gk \circ \varphi(f)
+\]
+#+end_exampleblock
+
+** Ejemplo: producto
+Consideramos el funtor diagonal $\Delta \colon {\cal C} \to {\cal C} \times {\cal C}$ que lleva $f \colon A \to B$
+a $\pair{f,f} \colon \pair{A,A} \to \pair{B,B}$. El funtor tiene una adjunción a la derecha.
+#+beamer: \only<1>{
+\begin{prooftree}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&] \red{\Delta}\; C \rar{f,g}\& \pair{A,B} \end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{\pair{f,g}}\& A \;\blue{\times}\; B \end{tikzcd}}
+\end{prooftree}
+#+beamer: }
+#+beamer: \only<2>{
+\begin{prooftree}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&] \pair{C,C} \rar{f,g}\& \pair{A,B} \end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{\pair{f,g}}\& A \;\blue{\times}\; B \end{tikzcd}}
+\end{prooftree}
+#+beamer: }
+#+beamer: \only<3>{
+\begin{prooftree}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&]
+C \rar{f}\& A \& C \rar{g}\& B
+\end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{\pair{f,g}}\& A \;\blue{\times}\; B \end{tikzcd}}
+\end{prooftree}
+#+beamer: }
+
+#+beamer: \metroset{block=fill}
+#+attr_latex: :options {Condiciones de naturalidad}
+#+begin_exampleblock
+\[
+\varphi(f \circ Fh) = \varphi(f) \circ h \qquad \varphi(k \circ f) = Gk \circ \varphi(f)
+\]
+#+end_exampleblock
+
+** Ejemplo: suma
+El mismo funtor diagonal $\Delta \colon {\cal C} \to {\cal C} \times {\cal C}$ tiene adjunción a la izquierda.
+#+beamer: \only<1>{
+\begin{prooftree}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&] A \,\red{+}\, B \rar{f + g}\& C \end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] \pair{A,B} \rar{f,g} \& \blue{\Delta}\,C \end{tikzcd}}
+\end{prooftree}
+#+beamer: }
+#+beamer: \only<2>{
+\begin{prooftree}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&] A \,\red{+}\, B \rar{f + g}\& C \end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] \pair{A,B} \rar{f,g} \& \pair{C,C} \end{tikzcd}}
+\end{prooftree}
+#+beamer: }
+#+beamer: \only<3>{
+\begin{prooftree}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&] A \,\red{+}\, B \rar{f + g}\& C \end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] A \rar{f} \& C \& B \rar{g} \& C \end{tikzcd}}
+\end{prooftree}
+#+beamer: }
+
+Hay una cadena $+ \dashv \Delta \dashv \times$.
+
+#+beamer: \metroset{block=fill}
+#+attr_latex: :options {Condiciones de naturalidad}
+#+begin_exampleblock
+\[
+\varphi(f \circ Fh) = \varphi(f) \circ h \qquad \varphi(k \circ f) = Gk \circ \varphi(f)
+\]
+#+end_exampleblock
+
+* TODO Categorías cartesianas cerradas
+** Categorías cartesianas cerradas
+Vamos a ver tres adjuntos que pueden existir en una categoría
+cualquiera. Las categorías cartesianas cerradas son las que
+tienen esos tres adjuntos.
+
+** Unidad
+El objeto $1$ de una categoría es un objeto tal que desde cualquier
+otro objeto sólo existe una única flecha hacia él.
+
+\begin{prooftree}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&] \red{\ast} \rar{}\& \ast \end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{!}\& \blue{1} \end{tikzcd}}
+\end{prooftree}
+
+La categoría superior es una categoría trivial con un solo objeto.
+Hacia ella, tenemos un funtor trivial $\ast$. Desde ella, tenemos un
+funtor que elige un objeto $1$ en la categoría.
+
+** Productos
+Las flechas al producto de dos objetos están unívocamente
+determinadas por flechas a cada uno de los objetos
+#+beamer: \only<1>{
+\begin{prooftree}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&] \red{\Delta}\; C \rar{f,g}\& A,B \end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{\pair{f,g}}\& A \;\blue{\times}\; B \end{tikzcd}}
+\end{prooftree}
+#+beamer: }
+#+beamer: \only<2>{
+\begin{prooftree}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&] C,C \rar{f,g}\& A,B \end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{\pair{f,g}}\& A \;\blue{\times}\; B \end{tikzcd}}
+\end{prooftree}
+#+beamer: }
+#+beamer: \only<3>{
+\begin{prooftree}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&]
+C \rar{f}\& A \& C \rar{g}\& B
+\end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{\pair{f,g}}\& A \;\blue{\times}\; B \end{tikzcd}}
+\end{prooftree}
+#+beamer: }
+La categoría superior tiene como objetos pares de objetos
+y como morfismos pares de morfismos. Hacia ella, tenemos
+el funtor diagonal. Desde ella, tenemos el funtor producto
+de dos objetos.
+
+** Exponenciales
+Tener una flecha desde el producto por un objeto $A$ hacia otro $B$ es
+tener una flecha a la exponencial $B^A$.
+\begin{prooftree}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \red{\times A} \rar{f}\& B \end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{\widetilde{f}}\& B^{\blue{A}} \end{tikzcd}}
+\end{prooftree}
+Ambas categorías son la misma y al morfismo $\widetilde f$ se le llama /traspuesta/
+de $f$.
+
+* TODO Cálculo lambda
+** Cálculo lambda simplemente tipado
+:PROPERTIES:
+:BEAMER_OPT: fragile
+:END:
+
+Tomamos un cálculo lambda muy simple con tres constructores
+de tipos. Un tipo con un solo elemento $1$, un producto para
+cada dos tipos, y el tipo función entre dos tipos cualquiera.
+\begin{prooftree}
+\AXC{}   
+\UIC{$\Gamma \vdash \green{\ast} : 1$}
+\AXC{$\Gamma \vdash \green{a} : A$}
+\AXC{$\Gamma \vdash \green{b} : B$}
+\BIC{$\Gamma \vdash \green{\pair{a,b}} : A \times B$}
+\AXC{$\Gamma, \green{a} : A \vdash \green{b} : B$}  
+\UIC{$\Gamma \vdash \green{(\lambda a.b)} : A \to B$}
+\noLine
+\TIC{}
+\end{prooftree}
+
+\pause
+Con ciertas constantes y reglas de eliminación (simplificación),
+
+ * proyecciones $\green{\pi_1},\green{\pi_2}$ cumpliendo $\green{\pi_1 \pair{a,b}} \equiv \green{a}$ y $\green{\pi_2 \pair{a,b}} \equiv \green{b}$, y
+ * evaluación de funciones $\green{(\lambda a.b)\ a_0} \equiv \green{b[a_0/a]}$.
+
+Y ciertas reglas de unicidad.
+
+** Como lenguaje de programación
+El cálculo lambda sin tipos es un modelo de computación; el
+cálculo lambda con tipos es la base de los lenguajes funcionales
+de programación.
+
+\pause
+
+#+BEGIN_SRC haskell
+-- Haskell
+map (\x -> x+2) [1,2,3] -- [3,4,5]
+id = \x -> x            -- Define la identidad
+#+END_SRC
+
+\pause
+
+#+BEGIN_SRC haskell
+-- Mikrokosmos
+swap = \pair.(snd pair, fst pair)
+id = \x.x
+ifelse false 4 3
+#+END_SRC
+
+** Traducción entre categorías y cálculo lambda
+Tenemos categorías cartesianas con tres adjunciones.
+
+#+beamer: \only<1>{
+\begin{prooftree}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&] \red{\ast} \rar{}\& \ast \end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{!}\& \blue{1} \end{tikzcd}}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&] \red{\Delta}\; C \rar{f,g}\& A,B \end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{\pair{f,g}}\& A \;\blue{\times}\; B \end{tikzcd}}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \red{\times A} \rar{f}\& B \end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{\widetilde{f}}\& B^{\blue{A}} \end{tikzcd}}
+\noLine
+\TIC{}
+\end{prooftree}
+#+beamer: }
+#+beamer: \only<2>{
+\begin{prooftree}
+\AXC{}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{\green{\ast}}\& \blue{1} \end{tikzcd}}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&] \red{\Delta}\; C \rar{f,g}\& A,B \end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{\pair{f,g}}\& A \;\blue{\times}\; B \end{tikzcd}}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \red{\times A} \rar{f}\& B \end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{\widetilde{f}}\& B^{\blue{A}} \end{tikzcd}}
+\noLine
+\TIC{}
+\end{prooftree}
+#+beamer: }
+#+beamer: \only<3>{
+\begin{prooftree}
+\AXC{}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{\green{\ast}}\& \blue{1} \end{tikzcd}}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&] C,C \rar{f,g}\& A,B \end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{\pair{f,g}}\& A \;\blue{\times}\; B \end{tikzcd}}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \red{\times A} \rar{f}\& B \end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{\widetilde{f}}\& B^{\blue{A}} \end{tikzcd}}
+\noLine
+\TIC{}
+\end{prooftree}
+#+beamer: }
+#+beamer: \only<4>{
+\begin{prooftree}
+\AXC{}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{\green{\ast}}\& \blue{1} \end{tikzcd}}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&,column sep=small] C \rar{\green{f}}\& A \& C \rar{\green{g}}\& B \end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{\green{\pair{f,g}}}\& A \;\blue{\times}\; B \end{tikzcd}}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \red{\times A} \rar{f}\& B \end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{\widetilde{f}}\& B^{\blue{A}} \end{tikzcd}}
+\noLine
+\TIC{}
+\end{prooftree}
+#+beamer: }
+#+beamer: \only<5>{
+\begin{prooftree}
+\AXC{}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{\green{\ast}}\& \blue{1} \end{tikzcd}}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&,column sep=small] C \rar{\green{f}}\& A \& C \rar{\green{g}}\& B \end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{\green{\pair{f,g}}}\& A \;\blue{\times}\; B \end{tikzcd}}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \red{\times A} \rar{\green{f_a}}\& B \end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{\green{\lambda a.f_a}}\& B^{\blue{A}} \end{tikzcd}}
+\noLine
+\TIC{}
+\end{prooftree}
+#+beamer: }
+#+beamer: \only<6>{
+\begin{prooftree}
+\AXC{}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{\green{\ast}}\& \blue{1} \end{tikzcd}}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&,column sep=small] C \rar{\green{f}}\& A \& C \rar{\green{g}}\& B \end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{\green{\pair{f,g}}}\& A \;\blue{\times}\; B \end{tikzcd}}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \red{\times A} \rar{\green{f_a}}\& B \end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] C \rar{\green{\lambda a.f_a}}\& B^{\blue{A}} \end{tikzcd}}
+\noLine
+\TIC{}
+\end{prooftree}
+#+beamer: }
+#+beamer: \only<7>{
+\begin{prooftree}
+\AXC{}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] \Gamma \rar{\green{\ast}}\& \blue{1} \end{tikzcd}}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&,column sep=small] \Gamma{} \rar{\green{a}}\& A \& \Gamma{} \rar{\green{b}}\& B \end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] \Gamma \rar{\green{\pair{a,b}}}\& A \;\blue{\times}\; B \end{tikzcd}}
+\AXC{\begin{tikzcd}[fragile,ampersand replacement=\&] \Gamma \red{\times A} \rar{\green{b_a}}\& B \end{tikzcd}}
+\doubleLine
+\UIC{\begin{tikzcd}[fragile,ampersand replacement=\&] \Gamma \rar{\green{\lambda a.b_a}}\& B^{\blue{A}} \end{tikzcd}}
+\noLine
+\TIC{}
+\end{prooftree}
+#+beamer: }
+
+Y un cálculo lambda con tres reglas.
+\begin{prooftree}
+\AXC{}   
+\UIC{$\Gamma \vdash \green{\ast} : 1$}
+\AXC{$\Gamma \vdash \green{a} : A$}
+\AXC{$\Gamma \vdash \green{b} : B$}
+\BIC{$\Gamma \vdash \green{\pair{a,b}} : A \times B$}
+\AXC{$\Gamma, \green{a} : A \vdash \green{b} : B$}  
+\UIC{$\Gamma \vdash \green{(\lambda a.b)} : A \to B$}
+\noLine
+\TIC{}
+\end{prooftree}
+
+Reescribimos para comprobar que son similares.
+
+** Resumen
+Cada expresión en cálculo lambda puede interpretarse en
+cualquier categoría cartesiana cerrada.
+
+\pause
+
+ 1. Los morfismos $f \colon \Gamma \to A$ son los términos de tipo $A$
+    sobre el contexto $\Gamma$.\pause
+
+ 2. $\Gamma \times A$ es el contexto $\Gamma$ más un elemento de tipo $A$,
+    y $1$ es el contexto vacío.\pause
+
+ 3. Los términos sobre un contexto vacío (programas)
+    que devuelven algo de tipo $A$ son morfismos $\ast \to A$
+    (elementos de $A$).
+
+** Ejemplo: swap
+Un programa en cálculo lambda
+#+BEGIN_SRC haskell
+swap :: A x B -> B x A
+swap = \pair.(snd pair, fst pair)
+#+END_SRC
+se traduce a una construcción en categorías.
+\[\begin{tikzcd}[row sep=small]
+&& A & 1 \ar{dd}{\lambda p.(\pi_2 p, \pi_1 p)}  \\
+A \times B 
+\ar[dashed]{r}{(\pi_2,\pi_1)}
+\ar[bend left=20]{urr}{\pi_1}
+\ar[bend right=20]{drr}[swap]{\pi_2}  & 
+B \times A \urar[swap]{\pi_2}\drar{\pi_1} && \\
+&& B & \mathrm{hom}(A \times B, B \times A)\\
+\end{tikzcd}\]
